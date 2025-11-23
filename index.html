@@ -152,6 +152,31 @@
       40%{transform:translateY(-10px); opacity:1;}
     }
 
+    /* PROGRESS BAR */
+    .progress-container{
+      margin:18px auto 6px;
+      width:80%;
+      max-width:420px;
+      height:18px;
+      background:rgba(255,255,255,0.10);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.15);
+    }
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--neon1),var(--neon2),var(--neon3));
+      transition:width 1.2s ease-out;
+      box-shadow:0 0 14px rgba(255,255,255,0.35);
+    }
+    .progress-text{
+      margin-top:6px;
+      font-size:.9rem;
+      color:var(--muted);
+      letter-spacing:.05em;
+    }
+
     /* rotating emoji ring */
     .ring{
       position:relative;
@@ -211,22 +236,13 @@
       border-radius:2px;
     }
     .confetti i:nth-child(odd){width:6px; height:10px;}
-    .confetti i:nth-child(1){left:5%; background:var(--neon1); animation-duration:7s;}
-    .confetti i:nth-child(2){left:15%; background:var(--neon2); animation-duration:9s; animation-delay:-2s;}
-    .confetti i:nth-child(3){left:25%; background:var(--neon3); animation-duration:8s; animation-delay:-4s;}
-    .confetti i:nth-child(4){left:38%; background:#7cff6b; animation-duration:10s; animation-delay:-6s;}
-    .confetti i:nth-child(5){left:50%; background:#ff7b54; animation-duration:7.5s; animation-delay:-3s;}
-    .confetti i:nth-child(6){left:62%; background:#9b7bff; animation-duration:9.5s; animation-delay:-5s;}
-    .confetti i:nth-child(7){left:74%; background:#ffd166; animation-duration:8.5s; animation-delay:-1s;}
-    .confetti i:nth-child(8){left:86%; background:#4dabff; animation-duration:11s; animation-delay:-7s;}
-    .confetti i:nth-child(9){left:95%; background:#ff4dd2; animation-duration:9s; animation-delay:-8s;}
-
     @keyframes fall{
       0%{transform:translateY(-10vh) rotate(0deg); opacity:.9;}
       100%{transform:translateY(110vh) rotate(480deg); opacity:0.9;}
     }
   </style>
 </head>
+
 <body>
   <!-- ambient glow -->
   <div class="orb o1"></div>
@@ -261,7 +277,34 @@
       <div class="dot"></div>
     </div>
 
+    <!-- PROGRESS BAR INSERTED HERE -->
+    <div class="progress-container">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+    <div id="progressText" class="progress-text">Loading…</div>
+
     <div class="footer">Under Construction · Coming Soon</div>
   </main>
+
+  <script>
+    // EDIT THESE DATES
+    const startDate  = new Date("2025-01-01");
+    const targetDate = new Date("2025-06-15");
+
+    function updateProgress() {
+      const now = new Date();
+      const total = targetDate - startDate;
+      const current = now - startDate;
+
+      let percent = (current / total) * 100;
+      percent = Math.min(Math.max(percent, 0), 100);
+
+      document.getElementById("progressFill").style.width = percent + "%";
+      document.getElementById("progressText").textContent =
+        Math.floor(percent) + "% complete";
+    }
+
+    updateProgress();
+  </script>
 </body>
 </html>
