@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bachelor Party HQ</title>
+  <style>
+    :root{
+      --bg:#07070a;
+      --card: rgba(15,15,20,0.70);
+      --border: rgba(255,255,255,0.10);
+      --text:#f4f4f4;
+      --muted:#bdbdbd;
+      --neon1:#00f5ff;
+      --neon2:#ff3df0;
+      --neon3:#ffe66d;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(1000px 650px at 10% 0%, rgba(0,245,255,0.16), transparent 60%),
+        radial-gradient(1000px 650px at 90% 10%, rgba(255,61,240,0.14), transparent 60%),
+        radial-gradient(900px 600px at 50% 110%, rgba(255,230,109,0.10), transparent 55%),
+        linear-gradient(180deg, #06060a, #0a0a10);
+      overflow-x:hidden;
+    }
+    .wrap{padding:22px; display:grid; place-items:center;}
+    .shell{
+      width:min(1100px, 96vw);
+      border-radius:22px;
+      background: rgba(10,10,14,0.45);
+      border:1px solid var(--border);
+      box-shadow:0 20px 70px rgba(0,0,0,0.65);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    header{
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .title{
+      font-size:22px;
+      font-weight:950;
+      letter-spacing:.02em;
+      text-shadow: 0 0 14px rgba(0,245,255,0.16), 0 0 28px rgba(255,61,240,0.10);
+    }
+    .pill{
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.04);
+    }
+    .btn{
+      appearance:none;
+      border:none;
+      color:var(--text);
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.14);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+    }
+    .btn:hover{background:rgba(255,255,255,0.12);}
+    .btn.primary{
+      border-color: rgba(0,245,255,0.45);
+      box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap:14px;
+      padding:14px;
+    }
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(0,0,0,0.18);
+      overflow:hidden;
+    }
+    .card .h{
+      padding:14px 14px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .card .h h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+    .card .b{padding:14px;}
+    .muted{color:#d2d2d2; line-height:1.55;}
+    .list{margin:10px 0 0; padding-left:18px;}
+    .list li{margin:7px 0; color:#ddd;}
+
+    .timeline{
+      display:grid;
+      gap:10px;
+    }
+    .event{
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      padding:12px;
+      display:grid;
+      gap:4px;
+    }
+    .event b{font-weight:950;}
+    .event small{color:var(--muted);}
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+    .chip{
+      padding:9px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.04);
+      color:#e8e8e8;
+      font-size:13px;
+      text-decoration:none;
+      font-weight:700;
+    }
+    .chip:hover{background:rgba(255,255,255,0.08);}
+    footer{
+      padding:14px 14px 16px;
+      color:var(--muted);
+      border-top:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    code{background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:8px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="shell">
+      <header>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="title">😈 Bachelor Party HQ</div>
+          <span class="pill">Unlocked</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn" id="lockBtn" title="Make yourself play again next time">Lock Again</button>
+          <a class="btn primary" href="./index.html">Back to Gate</a>
+        </div>
+      </header>
+
+      <div class="grid">
+        <section class="card">
+          <div class="h">
+            <h2>Mission Brief</h2>
+            <span class="pill">Edit me</span>
+          </div>
+          <div class="b">
+            <p class="muted">
+              Welcome. This is the hub for the weekend — itinerary, links, and the “don’t get lost” plan.
+              Replace the placeholders below with your real details.
+            </p>
+            <ul class="list">
+              <li><b>Meetup:</b> TBD (add location + time)</li>
+              <li><b>Home base:</b> TBD (hotel / Airbnb)</li>
+              <li><b>Group chat:</b> TBD (link)</li>
+            </ul>
+
+            <div class="row">
+              <a class="chip" href="#" onclick="alert('Replace this with a Google Maps link'); return false;">📍 Open in Maps</a>
+              <a class="chip" href="#" onclick="alert('Replace this with your group chat link'); return false;">💬 Group Chat</a>
+              <a class="chip" href="#" onclick="alert('Replace this with your photo album link'); return false;">📸 Photo Album</a>
+              <a class="chip" href="#" onclick="alert('Replace this with RSVP form link'); return false;">✅ RSVP</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="h">
+            <h2>Tonight’s Timeline</h2>
+            <span class="pill">Sample</span>
+          </div>
+          <div class="b">
+            <div class="timeline">
+              <div class="event"><b>7:00 PM</b> Pre-game meetup <small>Location: TBD</small></div>
+              <div class="event"><b>8:30 PM</b> Main activity <small>Option: barcade / club / dinner</small></div>
+              <div class="event"><b>11:30 PM</b> Late-night food <small>Location: TBD</small></div>
+              <div class="event"><b>1:00 AM</b> Debrief / regroup <small>Home base</small></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="h">
+            <h2>Side Quests</h2>
+            <span class="pill">Fun</span>
+          </div>
+          <div class="b">
+            <ul class="list">
+              <li>Win a round at the arcade without talking.</li>
+              <li>Get a stranger to take a group photo (no selfies).</li>
+              <li>Find the best late-night snack rating and report back.</li>
+              <li>Optional: “Wheel of Dares” (easy to add next).</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="h">
+            <h2>Emergency Plan</h2>
+            <span class="pill">Actually useful</span>
+          </div>
+          <div class="b">
+            <ul class="list">
+              <li><b>Lost?</b> Go to: TBD (a fixed meetup point)</li>
+              <li><b>Phone dead?</b> Ask anyone to call: TBD (designated contact)</li>
+              <li><b>Ride:</b> Use Uber/Lyft, don’t improvise.</li>
+              <li><b>Address:</b> Add the home base address here.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <footer>
+        <div>Tip: edit <code>party.html</code> to add real itinerary + links.</div>
+        <div>🎉 Make it legendary (and safe).</div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    const UNLOCK_KEY = "bp_unlocked_v1";
+    document.getElementById("lockBtn").addEventListener("click", () => {
+      localStorage.removeItem(UNLOCK_KEY);
+      window.location.href = "./index.html";
+    });
+  </script>
+</body>
+</html>
