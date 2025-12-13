@@ -7,8 +7,6 @@
 
 <style>
 :root{
-  --bg:#07070a;
-  --card: rgba(15,15,20,0.70);
   --panel: rgba(0,0,0,0.18);
   --border: rgba(255,255,255,0.10);
   --text:#f4f4f4;
@@ -17,6 +15,7 @@
   --neon2:#ff3df0;
   --good:#67ff7a;
   --bad:#ff5a5a;
+  --warn:#ffe66d;
 }
 *{box-sizing:border-box;}
 body{
@@ -47,7 +46,7 @@ header{
   flex-wrap:wrap;
   border-bottom:1px solid rgba(255,255,255,0.08);
 }
-h1{margin:0;font-size:22px;font-weight:900;}
+h1{margin:0;font-size:22px;font-weight:950;}
 .pill{
   font-size:12px;
   letter-spacing:.12em;
@@ -64,23 +63,31 @@ h1{margin:0;font-size:22px;font-weight:900;}
   padding:10px 12px;
   background:rgba(255,255,255,0.08);
   color:var(--text);
-  font-weight:800;
+  font-weight:850;
   cursor:pointer;
   border:1px solid rgba(255,255,255,0.14);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
 }
+.btn:hover{background:rgba(255,255,255,0.12);}
 .btn.primary{border-color:rgba(0,245,255,.5);}
 .btn.danger{border-color:rgba(255,90,90,.4);}
+
 .grid{
   display:grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1.25fr 1fr;
   gap:14px;
   padding:14px;
 }
 @media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
 .card{
   border-radius:18px;
   background:var(--panel);
   border:1px solid rgba(255,255,255,0.10);
+  overflow:hidden;
 }
 .card .h{
   padding:14px;
@@ -89,29 +96,18 @@ h1{margin:0;font-size:22px;font-weight:900;}
   justify-content:space-between;
   align-items:center;
   flex-wrap:wrap;
+  gap:10px;
+}
+.card .h h2{
+  margin:0;
+  font-size:14px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:900;
 }
 .card .b{padding:14px;}
-.event{
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:10px;
-  border:1px solid rgba(255,255,255,0.10);
-  background:rgba(255,255,255,0.04);
-}
-.event.active{
-  border-color:rgba(255,61,240,.4);
-  box-shadow:0 0 0 3px rgba(255,61,240,.1);
-}
-.tag{font-size:11px;color:var(--muted);}
-.chip{
-  display:inline-block;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.14);
-  text-decoration:none;
-  color:#eee;
-  font-weight:800;
-}
+
 .phaseRow{display:flex;gap:8px;flex-wrap:wrap;}
 .phaseBtn{
   border-radius:999px;
@@ -124,9 +120,50 @@ h1{margin:0;font-size:22px;font-weight:900;}
 }
 .phaseBtn.active{
   border-color:rgba(0,245,255,.5);
-  background:rgba(0,245,255,.1);
+  background:rgba(0,245,255,.10);
 }
-.check{
+
+.event{
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:10px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.04);
+  display:grid;
+  gap:8px;
+}
+.event.active{
+  border-color:rgba(255,61,240,.4);
+  box-shadow:0 0 0 3px rgba(255,61,240,.1);
+  background:rgba(255,61,240,.06);
+}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.14);
+  text-decoration:none;
+  color:#eee;
+  font-weight:850;
+  width:max-content;
+}
+.chip:hover{background:rgba(255,255,255,0.06);}
+.small{color:var(--muted); font-size:12px; line-height:1.5;}
+.note{
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,230,109,0.28);
+  background: rgba(255,230,109,0.08);
+  color:#f2f2f2;
+  line-height:1.45;
+  font-weight:850;
+  margin-bottom:12px;
+}
+
+/* Side quests */
+.questRow{
   display:flex;
   gap:10px;
   align-items:flex-start;
@@ -134,178 +171,370 @@ h1{margin:0;font-size:22px;font-weight:900;}
   border-radius:14px;
   border:1px solid rgba(255,255,255,0.10);
   background:rgba(255,255,255,0.04);
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
-.check input{margin-top:3px;}
-.scoreBox{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
+.questRow input[type="checkbox"]{margin-top:4px;}
+.questText{
+  flex:1;
+  font-weight:900;
+  line-height:1.35;
 }
-.score{
-  font-size:44px;
-  font-weight:1000;
+.questMeta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+  line-height:1.35;
 }
-input{
-  width:100%;
-  background:rgba(0,0,0,.3);
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:10px;
-  padding:8px;
+.iconBtn{
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+  padding:8px 10px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
   color:#fff;
+  font-weight:950;
+}
+.iconBtn:hover{background:rgba(255,255,255,0.10);}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:16px;
+  transform:translateX(-50%);
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:900;
+  border:1px solid rgba(255,255,255,0.16);
+  background:rgba(0,0,0,0.55);
+  color:#f1f1f1;
+  display:none;
+  z-index:50;
+  max-width: min(92%, 520px);
+  text-align:center;
+}
+.toast.show{display:block; animation: toastIn .22s ease-out;}
+@keyframes toastIn{
+  from{opacity:0; transform:translateX(-50%) translateY(6px);}
+  to{opacity:1; transform:translateX(-50%) translateY(0);}
 }
 </style>
 </head>
 
 <body>
 <div class="wrap">
-<div class="shell">
+  <div class="shell">
+    <header>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h1>😈 Bachelor Party HQ</h1>
+        <span class="pill">Fixed Plan</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn" id="saveBtn">Save</button>
+        <button class="btn danger" id="resetBtn">Reset Local Data</button>
+        <a class="btn primary" href="./index.html">Back to Gate</a>
+      </div>
+    </header>
 
-<header>
-  <h1>😈 Bachelor Party HQ</h1>
-  <div>
-    <a class="btn" href="./index.html">Back to Gate</a>
+    <div class="grid">
+      <!-- LEFT: Itinerary -->
+      <section class="card">
+        <div class="h">
+          <h2>2-Day Plan</h2>
+          <div class="phaseRow" id="phaseRow"></div>
+        </div>
+        <div class="b">
+          <div class="note">
+            ⚽ Arsenal game is at <b>12:30 PM</b> — we have to be at O'Hanlon’s by <b>11:30 AM</b>.
+          </div>
+
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div style="font-weight:950;">Day 1 — Saturday</div>
+            <span class="pill">End night in Brooklyn</span>
+          </div>
+
+          <div class="event" data-phase="breakfast">
+            <div style="font-weight:950;">🍳 Breakfast with drinks (NYC)</div>
+            <div class="small">Morning — pick a spot close to the route.</div>
+          </div>
+
+          <div class="event" data-phase="arsenal">
+            <div style="font-weight:950;">⚽ Arsenal Game Bar — O’Hanlon’s</div>
+            <div class="small"><b>Arrive 11:30 AM</b> · Game 12:30 PM</div>
+            <a class="chip" href="https://maps.app.goo.gl/byUTXxXsXC6XQDZRA" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="event" data-phase="gaming">
+            <div style="font-weight:950;">🎮 Gaming Cafe</div>
+            <a class="chip" href="https://maps.app.goo.gl/HNnmR7HFJsyVnaUf9" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="event" data-phase="dinner">
+            <div style="font-weight:950;">🥗 Vegan dinner</div>
+            <a class="chip" href="https://maps.app.goo.gl/UzuAtJY3tA6fr3n98" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="event" data-phase="brooklyn">
+            <div style="font-weight:950;">🌃 End night in Brooklyn</div>
+            <div class="small">Pick neighborhood + bars based on energy.</div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div style="font-weight:950;">Day 2 — Sunday</div>
+            <span class="pill">RPM opens 11 AM</span>
+          </div>
+
+          <div class="event" data-phase="sunday-breakfast">
+            <div style="font-weight:950;">🥞 Breakfast — Jersey City Diner</div>
+            <div class="small">Fuel up before karts.</div>
+          </div>
+
+          <div class="event" data-phase="rpm">
+            <div style="font-weight:950;">🏎️ Go Karting — RPM Raceway</div>
+            <div class="small"><b>Opens 11:00 AM</b></div>
+            <a class="chip" href="https://maps.app.goo.gl/ni2cSgXXZ6R4bcXm8" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Side quests -->
+      <section class="card">
+        <div class="h">
+          <h2>Side Quests</h2>
+          <span class="pill">Saved locally</span>
+        </div>
+        <div class="b">
+          <div id="quests"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <button class="btn primary" id="addQuestBtn">Add Quest</button>
+            <button class="btn" id="randomChallengeBtn">Random Challenge</button>
+          </div>
+
+          <div id="challengeBox" class="small" style="margin-top:10px;"></div>
+        </div>
+      </section>
+    </div>
+
+    <footer style="padding:14px 14px 16px; color:var(--muted); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <div>Plan is fixed in code. Side quests save on this device.</div>
+      <div>🎉 Legendary *and* safe.</div>
+    </footer>
   </div>
-</header>
-
-<div class="grid">
-
-<!-- ITINERARY -->
-<section class="card">
-<div class="h">
-  <span class="pill">Fixed Plan</span>
-  <div class="phaseRow" id="phaseRow"></div>
-</div>
-<div class="b">
-
-<h3>Day 1 — Saturday</h3>
-
-<div class="event" data-phase="breakfast">
-  🍳 Breakfast with drinks (NYC)
 </div>
 
-<div class="event" data-phase="arsenal">
-  ⚽ Arsenal @ O’Hanlon’s<br/>
-  <small>Arrive 11:30 AM — Game 12:30 PM</small><br/>
-  <a class="chip" href="https://maps.app.goo.gl/byUTXxXsXC6XQDZRA" target="_blank">📍 Maps</a>
-</div>
-
-<div class="event" data-phase="gaming">
-  🎮 Gaming Cafe<br/>
-  <a class="chip" href="https://maps.app.goo.gl/HNnmR7HFJsyVnaUf9" target="_blank">📍 Maps</a>
-</div>
-
-<div class="event" data-phase="dinner">
-  🥗 Vegan Dinner<br/>
-  <a class="chip" href="https://maps.app.goo.gl/UzuAtJY3tA6fr3n98" target="_blank">📍 Maps</a>
-</div>
-
-<div class="event" data-phase="brooklyn">
-  🌃 End night in Brooklyn
-</div>
-
-<h3>Day 2 — Sunday</h3>
-
-<div class="event" data-phase="sunday">
-  🥞 Jersey City Diner
-</div>
-
-<div class="event" data-phase="rpm">
-  🏎️ RPM Raceway (Opens 11 AM)<br/>
-  <a class="chip" href="https://maps.app.goo.gl/ni2cSgXXZ6R4bcXm8" target="_blank">📍 Maps</a>
-</div>
-
-</div>
-</section>
-
-<!-- SIDE QUESTS -->
-<section class="card">
-<div class="h"><span class="pill">Side Quests</span></div>
-<div class="b" id="quests"></div>
-</section>
-
-<!-- SHOT COUNTER -->
-<section class="card">
-<div class="h">
-  <span class="pill">Shot Counter</span>
-  <span class="pill" id="leader">Leader: —</span>
-</div>
-<div class="b">
-
-<div class="scoreBox">
-<div>
-  <div class="tag">Kraken (Groom)</div>
-  <div class="score" id="krakenScore">0</div>
-  <button class="btn primary" onclick="add('kraken',1)">+1</button>
-  <button class="btn" onclick="add('kraken',-1)">−1</button>
-  <input placeholder="Set" onblur="setScore('kraken',this.value)">
-</div>
-
-<div>
-  <div class="tag">Kreatures</div>
-  <div class="score" id="kreaturesScore">0</div>
-  <button class="btn primary" onclick="add('kreatures',1)">+1</button>
-  <button class="btn" onclick="add('kreatures',-1)">−1</button>
-  <input placeholder="Set" onblur="setScore('kreatures',this.value)">
-</div>
-</div>
-
-<br/>
-<button class="btn danger" onclick="resetShots()">Reset Shots</button>
-
-</div>
-</section>
-
-</div>
-</div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-const DATA_KEY="bp_party_final";
-const phases=["breakfast","arsenal","gaming","dinner","brooklyn","sunday","rpm"];
-let state=JSON.parse(localStorage.getItem(DATA_KEY))||{
-  phase:"breakfast",
-  shots:{kraken:0,kreatures:0},
-  quests:[
-    {t:"Wildcard breakfast order",d:false},
-    {t:"Arsenal captain arrives first",d:false},
-    {t:"Gaming MVP picks teams",d:false},
-    {t:"Dinner: order something new",d:false},
-    {t:"RPM: fastest lap wins crown",d:false}
-  ]
-};
+  // -------------------------
+  // Fixed plan phases (for highlight only)
+  // -------------------------
+  const phases = [
+    { key:"breakfast", label:"Breakfast", emoji:"🍳" },
+    { key:"arsenal", label:"Arsenal", emoji:"⚽" },
+    { key:"gaming", label:"Gaming", emoji:"🎮" },
+    { key:"dinner", label:"Dinner", emoji:"🥗" },
+    { key:"brooklyn", label:"Brooklyn", emoji:"🌃" },
+    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞" },
+    { key:"rpm", label:"RPM", emoji:"🏎️" }
+  ];
 
-function save(){localStorage.setItem(DATA_KEY,JSON.stringify(state));render();}
-function render(){
-  document.querySelectorAll(".event").forEach(e=>{
-    e.classList.toggle("active",e.dataset.phase===state.phase);
-  });
-  document.getElementById("krakenScore").textContent=state.shots.kraken;
-  document.getElementById("kreaturesScore").textContent=state.shots.kreatures;
-  document.getElementById("leader").textContent=
-    "Leader: "+(state.shots.kraken>state.shots.kreatures?"Kraken":
-                state.shots.kreatures>state.shots.kraken?"Kreatures":"—");
+  // -------------------------
+  // Local state (quests + selected phase)
+  // -------------------------
+  const DATA_KEY = "bp_party_fixed_v2";
 
-  const q=document.getElementById("quests"); q.innerHTML="";
-  state.quests.forEach((x,i)=>{
-    q.innerHTML+=`<div class="check">
-      <input type="checkbox" ${x.d?"checked":""} onchange="toggle(${i})">
-      <b>${x.t}</b>
-    </div>`;
+  const defaultState = {
+    phase: "breakfast",
+    quests: [
+      { id: cryptoRandomId(), text:"Breakfast: everyone orders one wildcard item.", done:false },
+      { id: cryptoRandomId(), text:"Arsenal: first person to arrive gets ‘captain’ status.", done:false },
+      { id: cryptoRandomId(), text:"Gaming: MVP names the team. Losers buy dessert.", done:false },
+      { id: cryptoRandomId(), text:"Dinner: order one dish no one has tried before.", done:false },
+      { id: cryptoRandomId(), text:"RPM: screenshot fastest lap — crown the king.", done:false },
+    ]
+  };
+
+  const randomChallenges = [
+    "At the next stop: everyone orders for the person to their right (one drink).",
+    "10-minute no-phone round.",
+    "Group photo with a stranger taking it (no selfies).",
+    "MVP must do a 30-second toast—no notes.",
+    "Loser buys fries for the table.",
+    "RPM: last place picks the next stop (reasonable).",
+    "Gaming: pistols-only round (or any fun constraint)."
+  ];
+
+  let state = loadState();
+
+  // -------------------------
+  // Utilities
+  // -------------------------
+  function cryptoRandomId(){
+    // Works on modern browsers (GitHub Pages fine)
+    if (window.crypto?.getRandomValues) {
+      const buf = new Uint32Array(2);
+      crypto.getRandomValues(buf);
+      return buf[0].toString(16) + buf[1].toString(16);
+    }
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  function toast(msg, good=true){
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.style.borderColor = good ? "rgba(103,255,122,0.35)" : "rgba(255,90,90,0.35)";
+    el.style.boxShadow = good ? "0 0 0 3px rgba(103,255,122,0.10)" : "0 0 0 3px rgba(255,90,90,0.10)";
+    el.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> el.classList.remove("show"), 900);
+  }
+
+  // -------------------------
+  // Persistence
+  // -------------------------
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(DATA_KEY);
+      if(!raw) return structuredClone(defaultState);
+
+      const parsed = JSON.parse(raw);
+      // defensive merge
+      return {
+        phase: (typeof parsed.phase === "string" ? parsed.phase : defaultState.phase),
+        quests: Array.isArray(parsed.quests) ? parsed.quests : structuredClone(defaultState.quests)
+      };
+    } catch {
+      return structuredClone(defaultState);
+    }
+  }
+
+  function saveState(){
+    localStorage.setItem(DATA_KEY, JSON.stringify(state));
+    toast("Saved ✅", true);
+    render();
+  }
+
+  // -------------------------
+  // Render
+  // -------------------------
+  function renderPhaseButtons(){
+    const row = document.getElementById("phaseRow");
+    row.innerHTML = "";
+
+    phases.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = "phaseBtn" + (state.phase === p.key ? " active" : "");
+      btn.textContent = `${p.emoji} ${p.label}`;
+      btn.addEventListener("click", () => {
+        state.phase = p.key;
+        saveState();
+      });
+      row.appendChild(btn);
+    });
+  }
+
+  function highlightPlan(){
+    document.querySelectorAll(".event").forEach(ev => {
+      const ph = ev.getAttribute("data-phase");
+      ev.classList.toggle("active", ph === state.phase);
+    });
+  }
+
+  function renderQuests(){
+    const root = document.getElementById("quests");
+    root.innerHTML = "";
+
+    state.quests.forEach((q) => {
+      const row = document.createElement("div");
+      row.className = "questRow";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!q.done;
+
+      const mid = document.createElement("div");
+      mid.style.flex = "1";
+
+      const title = document.createElement("div");
+      title.className = "questText";
+      title.textContent = q.text;
+
+      const meta = document.createElement("div");
+      meta.className = "questMeta";
+      meta.textContent = q.done ? "Completed. Respect." : "Unfinished business.";
+
+      mid.appendChild(title);
+      mid.appendChild(meta);
+
+      const del = document.createElement("button");
+      del.className = "iconBtn";
+      del.title = "Delete";
+      del.textContent = "✕";
+
+      cb.addEventListener("change", () => {
+        q.done = cb.checked;
+        saveState();
+      });
+
+      del.addEventListener("click", () => {
+        state.quests = state.quests.filter(x => x.id !== q.id);
+        saveState();
+      });
+
+      row.appendChild(cb);
+      row.appendChild(mid);
+      row.appendChild(del);
+
+      root.appendChild(row);
+    });
+  }
+
+  function render(){
+    renderPhaseButtons();
+    highlightPlan();
+    renderQuests();
+  }
+
+  // -------------------------
+  // Wiring
+  // -------------------------
+  document.getElementById("saveBtn").addEventListener("click", saveState);
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if(!confirm("Reset side quests + selected phase on this device?")) return;
+    localStorage.removeItem(DATA_KEY);
+    state = structuredClone(defaultState);
+    render();
+    toast("Reset ✅", true);
   });
 
-  const pr=document.getElementById("phaseRow"); pr.innerHTML="";
-  phases.forEach(p=>{
-    pr.innerHTML+=`<button class="phaseBtn ${p===state.phase?"active":""}" onclick="setPhase('${p}')">${p}</button>`;
+  document.getElementById("addQuestBtn").addEventListener("click", () => {
+    const text = prompt("Add a side quest:");
+    if(!text || !text.trim()) return;
+    state.quests.unshift({ id: cryptoRandomId(), text: text.trim(), done:false });
+    saveState();
   });
-}
-function setPhase(p){state.phase=p;save();}
-function toggle(i){state.quests[i].d=!state.quests[i].d;save();}
-function add(t,v){state.shots[t]=Math.max(0,state.shots[t]+v);save();}
-function setScore(t,v){if(v!==""){state.shots[t]=Math.max(0,parseInt(v)||0);save();}}
-function resetShots(){state.shots={kraken:0,kreatures:0};save();}
-render();
+
+  document.getElementById("randomChallengeBtn").addEventListener("click", () => {
+    const pick = randomChallenges[Math.floor(Math.random() * randomChallenges.length)];
+    document.getElementById("challengeBox").innerHTML =
+      `<span class="pill" style="border-color: rgba(255,61,240,0.35); color:#ddd;">Challenge</span> &nbsp; ${escapeHtml(pick)}`;
+  });
+
+  // Init
+  render();
 </script>
-
 </body>
 </html>
