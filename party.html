@@ -16,6 +16,8 @@
   --good:#67ff7a;
   --bad:#ff5a5a;
   --warn:#ffe66d;
+
+  --accent: var(--neon1);
 }
 *{box-sizing:border-box;}
 body{
@@ -27,7 +29,47 @@ body{
     linear-gradient(180deg, #06060a, #0a0a10);
   color:var(--text);
 }
-.wrap{padding:22px; display:grid; place-items:center;}
+
+/* Background FX (shared) */
+.bgFX{
+  position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+}
+.fxOrb{
+  position:absolute; width:420px; height:420px; border-radius:50%;
+  filter: blur(60px); opacity:.28; mix-blend-mode: screen;
+  animation: fxDrift 16s ease-in-out infinite;
+}
+.fxOrb.o1{ background: var(--neon1); top:-140px; left:-180px; }
+.fxOrb.o2{ background: var(--neon2); top:10%; right:-220px; animation-delay:-5s; }
+.fxOrb.o3{ background: var(--warn); bottom:-200px; left:20%; animation-delay:-9s; }
+@keyframes fxDrift{
+  0%{ transform: translate(0,0) scale(1); }
+  50%{ transform: translate(70px,40px) scale(1.12); }
+  100%{ transform: translate(0,0) scale(1); }
+}
+.fxGrid{
+  position:absolute; inset:-20%;
+  opacity:.16;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
+}
+.fxNoise{
+  position:absolute; inset:0; opacity:.06;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px);
+  mix-blend-mode: overlay;
+}
+.fxVignette{
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 50% 0%, transparent 35%, rgba(0,0,0,0.55) 100%);
+  opacity:.8;
+}
+
+.wrap{padding:22px; display:grid; place-items:center; position:relative; z-index:2;}
 .shell{
   width:min(1200px, 96vw);
   border-radius:22px;
@@ -36,6 +78,7 @@ body{
   box-shadow:0 20px 70px rgba(0,0,0,0.65);
   backdrop-filter: blur(10px);
   overflow:hidden;
+  position:relative;
 }
 header{
   padding:18px 20px;
@@ -174,42 +217,23 @@ h1{margin:0;font-size:22px;font-weight:950;}
   margin-bottom:10px;
 }
 .questRow input[type="checkbox"]{margin-top:4px;}
-.questText{
-  flex:1;
-  font-weight:900;
-  line-height:1.35;
-}
-.questMeta{
-  color:var(--muted);
-  font-size:12px;
-  margin-top:3px;
-  line-height:1.35;
-}
+.questText{flex:1; font-weight:900; line-height:1.35;}
+.questMeta{color:var(--muted); font-size:12px; margin-top:3px; line-height:1.35;}
 .iconBtn{
-  border:none;
-  cursor:pointer;
-  border-radius:12px;
-  padding:8px 10px;
+  border:none; cursor:pointer; border-radius:12px; padding:8px 10px;
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.12);
-  color:#fff;
-  font-weight:950;
+  color:#fff; font-weight:950;
 }
 .iconBtn:hover{background:rgba(255,255,255,0.10);}
 
 .toast{
-  position:fixed;
-  left:50%;
-  bottom:16px;
-  transform:translateX(-50%);
-  padding:10px 12px;
-  border-radius:12px;
-  font-weight:900;
+  position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+  padding:10px 12px; border-radius:12px; font-weight:900;
   border:1px solid rgba(255,255,255,0.16);
   background:rgba(0,0,0,0.55);
   color:#f1f1f1;
-  display:none;
-  z-index:50;
+  display:none; z-index:50;
   max-width: min(92%, 520px);
   text-align:center;
 }
@@ -218,12 +242,117 @@ h1{margin:0;font-size:22px;font-weight:950;}
   from{opacity:0; transform:translateX(-50%) translateY(6px);}
   to{opacity:1; transform:translateX(-50%) translateY(0);}
 }
+
+/* HERO */
+.hero{ padding:16px 14px 0; }
+.heroCard{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(0,0,0,0.22);
+  overflow:hidden;
+  position:relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.heroInner{
+  padding:16px 16px 14px;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.heroLeft{ min-width: 280px; flex: 1; }
+.heroTitle{
+  margin:0;
+  font-size: clamp(26px, 3.2vw, 44px);
+  font-weight: 1000;
+  letter-spacing: .02em;
+  line-height:1.05;
+  text-shadow:
+    0 0 16px rgba(0,245,255,0.18),
+    0 0 34px rgba(255,61,240,0.12);
+  position:relative;
+}
+.heroTitle span{
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(0,245,255,0.18), 0 0 28px rgba(255,61,240,0.10);
+}
+.heroTitle::after{
+  content:"";
+  position:absolute;
+  inset:-6px -10px;
+  background: linear-gradient(90deg, transparent, rgba(0,245,255,0.16), rgba(255,61,240,0.14), transparent);
+  transform: translateX(-120%);
+  filter: blur(2px);
+  animation: shimmer 4.8s ease-in-out infinite;
+  pointer-events:none;
+  opacity:.9;
+}
+@keyframes shimmer{
+  0%{ transform: translateX(-120%); }
+  45%{ transform: translateX(120%); }
+  100%{ transform: translateX(120%); }
+}
+.heroTagline{
+  margin:10px 0 0;
+  color:#d8d8d8;
+  line-height:1.45;
+  font-weight:800;
+}
+.heroTagline b{
+  color: var(--warn);
+  text-shadow: 0 0 16px rgba(255,230,109,0.10);
+}
+.heroRight{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  align-items:center;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.pulseDot{
+  width:10px; height:10px; border-radius:50%;
+  background: var(--good);
+  box-shadow: 0 0 14px rgba(103,255,122,0.55);
+  animation: pulse 1.2s infinite ease-in-out;
+}
+@keyframes pulse{
+  0%,100%{ transform:scale(0.85); opacity:.65; }
+  50%{ transform:scale(1.1); opacity:1; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .fxOrb, .heroTitle::after, .pulseDot{ animation:none !important; }
+}
 </style>
 </head>
 
 <body>
+<div class="bgFX" aria-hidden="true">
+  <div class="fxOrb o1"></div>
+  <div class="fxOrb o2"></div>
+  <div class="fxOrb o3"></div>
+  <div class="fxGrid"></div>
+  <div class="fxNoise"></div>
+  <div class="fxVignette"></div>
+</div>
+
 <div class="wrap">
   <div class="shell">
+
     <header>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <h1>😈 Bachelor Party HQ</h1>
@@ -235,6 +364,23 @@ h1{margin:0;font-size:22px;font-weight:950;}
         <a class="btn primary" href="./index.html">Back to Gate</a>
       </div>
     </header>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="heroCard" id="heroCard">
+        <div class="heroInner">
+          <div class="heroLeft">
+            <h2 class="heroTitle" id="heroTitle">🐙 <span>Kraken’s</span> Bachelor Party HQ</h2>
+            <p class="heroTagline" id="tagline">Welcome to the <b>Chaos Control Center</b>.</p>
+          </div>
+          <div class="heroRight">
+            <span class="badge"><span class="pulseDot"></span> LIVE WEEKEND OPS</span>
+            <span class="pill">Rule #1: groom is always right</span>
+            <span class="pill">Rule #2: see rule #1</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="grid">
       <!-- LEFT: Itinerary -->
@@ -332,19 +478,19 @@ h1{margin:0;font-size:22px;font-weight:950;}
   // Fixed plan phases (for highlight only)
   // -------------------------
   const phases = [
-    { key:"breakfast", label:"Breakfast", emoji:"🍳" },
-    { key:"arsenal", label:"Arsenal", emoji:"⚽" },
-    { key:"gaming", label:"Gaming", emoji:"🎮" },
-    { key:"dinner", label:"Dinner", emoji:"🥗" },
-    { key:"brooklyn", label:"Brooklyn", emoji:"🌃" },
-    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞" },
-    { key:"rpm", label:"RPM", emoji:"🏎️" }
+    { key:"breakfast", label:"Breakfast", emoji:"🍳", accent:"var(--warn)", heroEmoji:"🍳" },
+    { key:"arsenal", label:"Arsenal", emoji:"⚽", accent:"var(--neon2)", heroEmoji:"⚽" },
+    { key:"gaming", label:"Gaming", emoji:"🎮", accent:"var(--neon1)", heroEmoji:"🎮" },
+    { key:"dinner", label:"Dinner", emoji:"🥗", accent:"var(--good)", heroEmoji:"🥗" },
+    { key:"brooklyn", label:"Brooklyn", emoji:"🌃", accent:"var(--neon2)", heroEmoji:"🌃" },
+    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞", accent:"var(--warn)", heroEmoji:"🥞" },
+    { key:"rpm", label:"RPM", emoji:"🏎️", accent:"var(--neon1)", heroEmoji:"🏎️" }
   ];
 
   // -------------------------
   // Local state (quests + selected phase)
   // -------------------------
-  const DATA_KEY = "bp_party_fixed_v2";
+  const DATA_KEY = "bp_party_fixed_v3";
 
   const defaultState = {
     phase: "breakfast",
@@ -369,11 +515,20 @@ h1{margin:0;font-size:22px;font-weight:950;}
 
   let state = loadState();
 
+  // Fun rotating tagline
+  const taglines = [
+    "Welcome to the <b>Chaos Control Center</b>.",
+    "Mission: <b>legendary</b>. Execution: <b>questionable</b>.",
+    "Proceed with <b>confidence</b> (and a water bottle).",
+    "If found, return groom to <b>Brooklyn</b>.",
+    "Today’s forecast: <b>good decisions optional</b>.",
+    "A disciplined plan for <b>undisciplined behavior</b>."
+  ];
+
   // -------------------------
   // Utilities
   // -------------------------
   function cryptoRandomId(){
-    // Works on modern browsers (GitHub Pages fine)
     if (window.crypto?.getRandomValues) {
       const buf = new Uint32Array(2);
       crypto.getRandomValues(buf);
@@ -410,7 +565,6 @@ h1{margin:0;font-size:22px;font-weight:950;}
       if(!raw) return structuredClone(defaultState);
 
       const parsed = JSON.parse(raw);
-      // defensive merge
       return {
         phase: (typeof parsed.phase === "string" ? parsed.phase : defaultState.phase),
         quests: Array.isArray(parsed.quests) ? parsed.quests : structuredClone(defaultState.quests)
@@ -425,6 +579,56 @@ h1{margin:0;font-size:22px;font-weight:950;}
     toast("Saved ✅", true);
     render();
   }
+
+  // -------------------------
+  // Hero reactions + parallax
+  // -------------------------
+  function updateHeroForPhase(){
+    const p = phases.find(x => x.key === state.phase) || phases[0];
+    document.documentElement.style.setProperty("--accent", p.accent);
+
+    const heroTitle = document.getElementById("heroTitle");
+    if(heroTitle){
+      heroTitle.innerHTML = `${p.heroEmoji} <span>Kraken’s</span> Bachelor Party HQ`;
+    }
+  }
+
+  (function rotateTagline(){
+    const el = document.getElementById("tagline");
+    if(!el) return;
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % taglines.length;
+      el.innerHTML = taglines[i];
+    }, 3500);
+  })();
+
+  (function heroParallax(){
+    const card = document.getElementById("heroCard");
+    if(!card) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce) return;
+
+    const maxTilt = 7; // degrees
+    const maxLift = 6; // px
+
+    function onMove(e){
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+
+      const rotY = (x - 0.5) * (maxTilt * 2);
+      const rotX = (0.5 - y) * (maxTilt * 2);
+      const lift = (1 - Math.abs(x - 0.5) - Math.abs(y - 0.5)) * maxLift;
+
+      card.style.transform = `perspective(900px) translateY(${-Math.max(0, lift)}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    }
+    function onLeave(){
+      card.style.transform = `perspective(900px) translateY(0px) rotateX(0deg) rotateY(0deg)`;
+    }
+    document.addEventListener("mousemove", onMove, {passive:true});
+    card.addEventListener("mouseleave", onLeave);
+  })();
 
   // -------------------------
   // Render
@@ -505,6 +709,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
     renderPhaseButtons();
     highlightPlan();
     renderQuests();
+    updateHeroForPhase();
   }
 
   // -------------------------
