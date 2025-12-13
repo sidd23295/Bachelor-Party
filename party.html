@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Bachelor Party HQ</title>
+<title>Kraken’s Bachelor Party HQ</title>
 
 <style>
 :root{
@@ -13,11 +13,10 @@
   --muted:#bdbdbd;
   --neon1:#00f5ff;
   --neon2:#ff3df0;
+  --neon3:#ffe66d;
   --good:#67ff7a;
   --bad:#ff5a5a;
   --warn:#ffe66d;
-
-  --accent: var(--neon1);
 }
 *{box-sizing:border-box;}
 body{
@@ -26,47 +25,32 @@ body{
   background:
     radial-gradient(1000px 650px at 10% 0%, rgba(0,245,255,0.16), transparent 60%),
     radial-gradient(1000px 650px at 90% 10%, rgba(255,61,240,0.14), transparent 60%),
+    radial-gradient(900px 600px at 50% 110%, rgba(255,230,109,0.10), transparent 55%),
     linear-gradient(180deg, #06060a, #0a0a10);
   color:var(--text);
+  overflow-x:hidden;
 }
-
-/* Background FX (shared) */
-.bgFX{
-  position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+.orb{
+  position:absolute; width:280px; height:280px; border-radius:50%;
+  filter:blur(50px); opacity:.35; mix-blend-mode:screen;
+  animation: drift 14s ease-in-out infinite;
+  pointer-events:none;
 }
-.fxOrb{
-  position:absolute; width:420px; height:420px; border-radius:50%;
-  filter: blur(60px); opacity:.28; mix-blend-mode: screen;
-  animation: fxDrift 16s ease-in-out infinite;
+.orb.o1{background:var(--neon1); top:-90px; left:-70px;}
+.orb.o2{background:var(--neon2); top:10%; right:-100px; animation-delay:-4s;}
+.orb.o3{background:var(--neon3); bottom:-120px; left:20%; animation-delay:-7s;}
+@keyframes drift{
+  0%{transform:translate(0,0) scale(1);}
+  50%{transform:translate(40px,30px) scale(1.15);}
+  100%{transform:translate(0,0) scale(1);}
 }
-.fxOrb.o1{ background: var(--neon1); top:-140px; left:-180px; }
-.fxOrb.o2{ background: var(--neon2); top:10%; right:-220px; animation-delay:-5s; }
-.fxOrb.o3{ background: var(--warn); bottom:-200px; left:20%; animation-delay:-9s; }
-@keyframes fxDrift{
-  0%{ transform: translate(0,0) scale(1); }
-  50%{ transform: translate(70px,40px) scale(1.12); }
-  100%{ transform: translate(0,0) scale(1); }
-}
-.fxGrid{
-  position:absolute; inset:-20%;
-  opacity:.16;
+.gridfx{
+  position:fixed; inset:0; pointer-events:none; opacity:.24;
   background-image:
     linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(circle at 50% 20%, rgba(0,0,0,1), rgba(0,0,0,0));
-}
-.fxNoise{
-  position:absolute; inset:0; opacity:.06;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 4px);
-  mix-blend-mode: overlay;
-}
-.fxVignette{
-  position:absolute; inset:0;
-  background: radial-gradient(circle at 50% 0%, transparent 35%, rgba(0,0,0,0.55) 100%);
-  opacity:.8;
+  background-size: 52px 52px;
+  mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
 }
 
 .wrap{padding:22px; display:grid; place-items:center; position:relative; z-index:2;}
@@ -78,8 +62,10 @@ body{
   box-shadow:0 20px 70px rgba(0,0,0,0.65);
   backdrop-filter: blur(10px);
   overflow:hidden;
-  position:relative;
+  transform-style:preserve-3d;
+  transition: transform .14s ease;
 }
+
 header{
   padding:18px 20px;
   display:flex;
@@ -89,7 +75,7 @@ header{
   flex-wrap:wrap;
   border-bottom:1px solid rgba(255,255,255,0.08);
 }
-h1{margin:0;font-size:22px;font-weight:950;}
+
 .pill{
   font-size:12px;
   letter-spacing:.12em;
@@ -100,6 +86,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
   border:1px solid rgba(255,255,255,0.14);
   background:rgba(255,255,255,0.04);
 }
+
 .btn{
   border:none;
   border-radius:12px;
@@ -117,6 +104,55 @@ h1{margin:0;font-size:22px;font-weight:950;}
 .btn:hover{background:rgba(255,255,255,0.12);}
 .btn.primary{border-color:rgba(0,245,255,.5);}
 .btn.danger{border-color:rgba(255,90,90,.4);}
+
+.hero{
+  padding:16px 20px 0;
+}
+.heroKicker{
+  letter-spacing:.14em; text-transform:uppercase;
+  color:rgba(255,255,255,0.78);
+  font-weight:1000;
+}
+.heroTitle{
+  margin:8px 0 6px;
+  font-size: clamp(30px, 3.8vw, 48px);
+  font-weight:1000;
+  line-height:1.06;
+  background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--neon3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow: 0 0 18px rgba(0,245,255,0.12), 0 0 30px rgba(255,61,240,0.10);
+}
+.heroTitle .phaseGlow{
+  color:rgba(255,255,255,0.90);
+  background:none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  text-shadow:none;
+  font-weight:1000;
+}
+.heroSub{
+  margin:0 0 10px;
+  color:#d2d2d2;
+  line-height:1.5;
+  font-weight:850;
+}
+.heroLine{
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  margin:12px 0 0;
+  position:relative;
+}
+.heroLine::after{
+  content:"";
+  position:absolute;
+  top:-1px; left:0;
+  height:3px; width:40%;
+  background: linear-gradient(90deg, transparent, var(--neon1), var(--neon2), transparent);
+  filter: blur(2px);
+  animation: sweep 1.35s linear infinite;
+  opacity:.85;
+}
+@keyframes sweep{ 0%{transform:translateX(-120%);} 100%{transform:translateX(240%);} }
 
 .grid{
   display:grid;
@@ -217,23 +253,42 @@ h1{margin:0;font-size:22px;font-weight:950;}
   margin-bottom:10px;
 }
 .questRow input[type="checkbox"]{margin-top:4px;}
-.questText{flex:1; font-weight:900; line-height:1.35;}
-.questMeta{color:var(--muted); font-size:12px; margin-top:3px; line-height:1.35;}
+.questText{
+  flex:1;
+  font-weight:900;
+  line-height:1.35;
+}
+.questMeta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+  line-height:1.35;
+}
 .iconBtn{
-  border:none; cursor:pointer; border-radius:12px; padding:8px 10px;
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+  padding:8px 10px;
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.12);
-  color:#fff; font-weight:950;
+  color:#fff;
+  font-weight:950;
 }
 .iconBtn:hover{background:rgba(255,255,255,0.10);}
 
 .toast{
-  position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
-  padding:10px 12px; border-radius:12px; font-weight:900;
+  position:fixed;
+  left:50%;
+  bottom:16px;
+  transform:translateX(-50%);
+  padding:10px 12px;
+  border-radius:12px;
+  font-weight:900;
   border:1px solid rgba(255,255,255,0.16);
   background:rgba(0,0,0,0.55);
   color:#f1f1f1;
-  display:none; z-index:50;
+  display:none;
+  z-index:50;
   max-width: min(92%, 520px);
   text-align:center;
 }
@@ -243,120 +298,23 @@ h1{margin:0;font-size:22px;font-weight:950;}
   to{opacity:1; transform:translateX(-50%) translateY(0);}
 }
 
-/* HERO */
-.hero{ padding:16px 14px 0; }
-.heroCard{
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,0.10);
-  background: rgba(0,0,0,0.22);
-  overflow:hidden;
-  position:relative;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.heroInner{
-  padding:16px 16px 14px;
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
-  justify-content:space-between;
-  flex-wrap:wrap;
-}
-.heroLeft{ min-width: 280px; flex: 1; }
-.heroTitle{
-  margin:0;
-  font-size: clamp(26px, 3.2vw, 44px);
-  font-weight: 1000;
-  letter-spacing: .02em;
-  line-height:1.05;
-  text-shadow:
-    0 0 16px rgba(0,245,255,0.18),
-    0 0 34px rgba(255,61,240,0.12);
-  position:relative;
-}
-.heroTitle span{
-  color: var(--accent);
-  text-shadow: 0 0 18px rgba(0,245,255,0.18), 0 0 28px rgba(255,61,240,0.10);
-}
-.heroTitle::after{
-  content:"";
-  position:absolute;
-  inset:-6px -10px;
-  background: linear-gradient(90deg, transparent, rgba(0,245,255,0.16), rgba(255,61,240,0.14), transparent);
-  transform: translateX(-120%);
-  filter: blur(2px);
-  animation: shimmer 4.8s ease-in-out infinite;
-  pointer-events:none;
-  opacity:.9;
-}
-@keyframes shimmer{
-  0%{ transform: translateX(-120%); }
-  45%{ transform: translateX(120%); }
-  100%{ transform: translateX(120%); }
-}
-.heroTagline{
-  margin:10px 0 0;
-  color:#d8d8d8;
-  line-height:1.45;
-  font-weight:800;
-}
-.heroTagline b{
-  color: var(--warn);
-  text-shadow: 0 0 16px rgba(255,230,109,0.10);
-}
-.heroRight{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-  align-items:center;
-}
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:10px 12px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.04);
-  font-weight:900;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-}
-.pulseDot{
-  width:10px; height:10px; border-radius:50%;
-  background: var(--good);
-  box-shadow: 0 0 14px rgba(103,255,122,0.55);
-  animation: pulse 1.2s infinite ease-in-out;
-}
-@keyframes pulse{
-  0%,100%{ transform:scale(0.85); opacity:.65; }
-  50%{ transform:scale(1.1); opacity:1; }
-}
-
 @media (prefers-reduced-motion: reduce){
-  .fxOrb, .heroTitle::after, .pulseDot{ animation:none !important; }
+  .orb,.heroLine::after{ animation:none !important; }
+  .shell{ transition:none; }
 }
 </style>
 </head>
 
 <body>
-<div class="bgFX" aria-hidden="true">
-  <div class="fxOrb o1"></div>
-  <div class="fxOrb o2"></div>
-  <div class="fxOrb o3"></div>
-  <div class="fxGrid"></div>
-  <div class="fxNoise"></div>
-  <div class="fxVignette"></div>
-</div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div class="gridfx"></div>
 
 <div class="wrap">
-  <div class="shell">
-
+  <div class="shell" id="tiltShell">
     <header>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <h1>😈 Bachelor Party HQ</h1>
-        <span class="pill">Fixed Plan</span>
+        <span class="pill">🐙 Kraken’s</span>
+        <span class="pill">Bachelor Party HQ</span>
       </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <button class="btn" id="saveBtn">Save</button>
@@ -365,21 +323,11 @@ h1{margin:0;font-size:22px;font-weight:950;}
       </div>
     </header>
 
-    <!-- HERO -->
     <div class="hero">
-      <div class="heroCard" id="heroCard">
-        <div class="heroInner">
-          <div class="heroLeft">
-            <h2 class="heroTitle" id="heroTitle">🐙 <span>Kraken’s</span> Bachelor Party HQ</h2>
-            <p class="heroTagline" id="tagline">Welcome to the <b>Chaos Control Center</b>.</p>
-          </div>
-          <div class="heroRight">
-            <span class="badge"><span class="pulseDot"></span> LIVE WEEKEND OPS</span>
-            <span class="pill">Rule #1: groom is always right</span>
-            <span class="pill">Rule #2: see rule #1</span>
-          </div>
-        </div>
-      </div>
+      <div class="heroKicker" id="heroKicker">Current Phase</div>
+      <div class="heroTitle" id="heroTitle">🐙 Kraken’s Bachelor Party HQ — <span class="phaseGlow" id="heroPhase">Breakfast</span></div>
+      <div class="heroSub" id="heroSub">Pick a phase to highlight the plan. Side quests save locally on this device.</div>
+      <div class="heroLine"></div>
     </div>
 
     <div class="grid">
@@ -475,22 +423,22 @@ h1{margin:0;font-size:22px;font-weight:950;}
 
 <script>
   // -------------------------
-  // Fixed plan phases (for highlight only)
+  // Fixed plan phases (for highlight + hero)
   // -------------------------
   const phases = [
-    { key:"breakfast", label:"Breakfast", emoji:"🍳", accent:"var(--warn)", heroEmoji:"🍳" },
-    { key:"arsenal", label:"Arsenal", emoji:"⚽", accent:"var(--neon2)", heroEmoji:"⚽" },
-    { key:"gaming", label:"Gaming", emoji:"🎮", accent:"var(--neon1)", heroEmoji:"🎮" },
-    { key:"dinner", label:"Dinner", emoji:"🥗", accent:"var(--good)", heroEmoji:"🥗" },
-    { key:"brooklyn", label:"Brooklyn", emoji:"🌃", accent:"var(--neon2)", heroEmoji:"🌃" },
-    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞", accent:"var(--warn)", heroEmoji:"🥞" },
-    { key:"rpm", label:"RPM", emoji:"🏎️", accent:"var(--neon1)", heroEmoji:"🏎️" }
+    { key:"breakfast", label:"Breakfast", emoji:"🍳", hue: 180 },
+    { key:"arsenal", label:"Arsenal", emoji:"⚽", hue: 310 },
+    { key:"gaming", label:"Gaming", emoji:"🎮", hue: 55 },
+    { key:"dinner", label:"Vegan Dinner", emoji:"🥗", hue: 145 },
+    { key:"brooklyn", label:"Brooklyn", emoji:"🌃", hue: 230 },
+    { key:"sunday-breakfast", label:"Sunday Breakfast", emoji:"🥞", hue: 25 },
+    { key:"rpm", label:"RPM Raceway", emoji:"🏎️", hue: 200 }
   ];
 
   // -------------------------
   // Local state (quests + selected phase)
   // -------------------------
-  const DATA_KEY = "bp_party_fixed_v3";
+  const DATA_KEY = "bp_party_fixed_v2";
 
   const defaultState = {
     phase: "breakfast",
@@ -514,16 +462,6 @@ h1{margin:0;font-size:22px;font-weight:950;}
   ];
 
   let state = loadState();
-
-  // Fun rotating tagline
-  const taglines = [
-    "Welcome to the <b>Chaos Control Center</b>.",
-    "Mission: <b>legendary</b>. Execution: <b>questionable</b>.",
-    "Proceed with <b>confidence</b> (and a water bottle).",
-    "If found, return groom to <b>Brooklyn</b>.",
-    "Today’s forecast: <b>good decisions optional</b>.",
-    "A disciplined plan for <b>undisciplined behavior</b>."
-  ];
 
   // -------------------------
   // Utilities
@@ -581,54 +519,17 @@ h1{margin:0;font-size:22px;font-weight:950;}
   }
 
   // -------------------------
-  // Hero reactions + parallax
+  // Hero reacts to phase
   // -------------------------
-  function updateHeroForPhase(){
+  function renderHero(){
     const p = phases.find(x => x.key === state.phase) || phases[0];
-    document.documentElement.style.setProperty("--accent", p.accent);
+    document.getElementById("heroPhase").textContent = `${p.emoji} ${p.label}`;
+    document.getElementById("heroKicker").textContent = `Current Phase: ${p.label.toUpperCase()}`;
 
-    const heroTitle = document.getElementById("heroTitle");
-    if(heroTitle){
-      heroTitle.innerHTML = `${p.heroEmoji} <span>Kraken’s</span> Bachelor Party HQ`;
-    }
+    // Slightly shift the hero gradient feel by hue (lightweight)
+    const title = document.getElementById("heroTitle");
+    title.style.filter = `hue-rotate(${p.hue}deg)`;
   }
-
-  (function rotateTagline(){
-    const el = document.getElementById("tagline");
-    if(!el) return;
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % taglines.length;
-      el.innerHTML = taglines[i];
-    }, 3500);
-  })();
-
-  (function heroParallax(){
-    const card = document.getElementById("heroCard");
-    if(!card) return;
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if(reduce) return;
-
-    const maxTilt = 7; // degrees
-    const maxLift = 6; // px
-
-    function onMove(e){
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width;
-      const y = (e.clientY - r.top) / r.height;
-
-      const rotY = (x - 0.5) * (maxTilt * 2);
-      const rotX = (0.5 - y) * (maxTilt * 2);
-      const lift = (1 - Math.abs(x - 0.5) - Math.abs(y - 0.5)) * maxLift;
-
-      card.style.transform = `perspective(900px) translateY(${-Math.max(0, lift)}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-    }
-    function onLeave(){
-      card.style.transform = `perspective(900px) translateY(0px) rotateX(0deg) rotateY(0deg)`;
-    }
-    document.addEventListener("mousemove", onMove, {passive:true});
-    card.addEventListener("mouseleave", onLeave);
-  })();
 
   // -------------------------
   // Render
@@ -706,10 +607,10 @@ h1{margin:0;font-size:22px;font-weight:950;}
   }
 
   function render(){
+    renderHero();
     renderPhaseButtons();
     highlightPlan();
     renderQuests();
-    updateHeroForPhase();
   }
 
   // -------------------------
@@ -737,6 +638,21 @@ h1{margin:0;font-size:22px;font-weight:950;}
     document.getElementById("challengeBox").innerHTML =
       `<span class="pill" style="border-color: rgba(255,61,240,0.35); color:#ddd;">Challenge</span> &nbsp; ${escapeHtml(pick)}`;
   });
+
+  // Parallax tilt
+  const shell = document.getElementById("tiltShell");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!reduce){
+    window.addEventListener("mousemove", (e) => {
+      const r = shell.getBoundingClientRect();
+      const px = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+      const py = (e.clientY - (r.top + r.height/2)) / (r.height/2);
+      const rx = (-py * 3.5);
+      const ry = (px * 5.5);
+      shell.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    window.addEventListener("mouseleave", () => shell.style.transform = "rotateX(0) rotateY(0)");
+  }
 
   // Init
   render();
