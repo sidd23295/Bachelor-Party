@@ -40,6 +40,47 @@ body.disco{
 }
 
 /* =====================
+   Disco Confetti (10s)
+   Side cannons
+   ===================== */
+#confettiLayer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
+  overflow:hidden;
+  display:none;
+}
+#confettiLayer.on{ display:block; }
+
+.confetti{
+  position:absolute;
+  top:-12px;
+  width:10px;
+  height:16px;
+  border-radius:2px;
+  opacity:0.95;
+  transform: translate3d(0,0,0) rotate(0deg);
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.08));
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes confettiFall{
+  0%{
+    transform: translate3d(var(--x0), -20px, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100%{
+    transform: translate3d(var(--x1), 110vh, 0) rotate(var(--rot));
+    opacity: 0.95;
+  }
+}
+.confetti.left { left: -10px; }
+.confetti.right{ right: -10px; }
+
+/* =====================
    LAYOUT
    ===================== */
 .wrap{padding:22px; display:grid; place-items:center;}
@@ -260,6 +301,9 @@ h1{margin:0;font-size:22px;font-weight:950;}
 
 <body>
 
+<!-- Confetti layer for disco mode -->
+<div id="confettiLayer" aria-hidden="true"></div>
+
 <!-- Disco audio (plays only when disco mode is active) -->
 <audio id="discoAudio" preload="auto" loop>
   <source src="./assets/disco.mp3" type="audio/mpeg">
@@ -341,7 +385,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
           </div>
 
           <div class="small" style="margin-top:12px;">
-            Hidden controls: type <b>kraken</b> to unlock Disco · press <b>P</b> for Panic.
+            Hidden controls: type <b>kraken</b> to unlock Disco · double-click to toggle Disco · press <b>P</b> for Panic.
           </div>
         </div>
       </section>
@@ -383,7 +427,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
         <div style="margin-top:10px; font-size:22px; font-weight:950;">🐙 Kraken Identified</div>
         <div style="margin-top:6px; color:#d7d7d7; line-height:1.45;">
           Disco Mode is now unlocked.<br/>
-          Double-click anywhere to toggle Disco (10s).
+          Double-click anywhere to toggle Disco (10s). Confetti included.
         </div>
       </div>
       <button class="btn" id="krakenCloseBtn" aria-label="Close">✕</button>
@@ -608,7 +652,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
   render();
 
   // =========================
-  // Kraken unlock + Disco + Panic Redirect
+  // Kraken unlock + Disco + Panic Redirect + Confetti
   // =========================
   const prefersReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -618,8 +662,70 @@ h1{margin:0;font-size:22px;font-weight:950;}
   const discoAudio = document.getElementById("discoAudio");
   const DISCO_DURATION_MS = 10000;
 
+  // Confetti
+  const confettiLayer = document.getElementById("confettiLayer");
+  let confettiInterval = null;
+
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+
+  function makeConfettiPiece(side){
+    const el = document.createElement("div");
+    el.className = `confetti ${side}`;
+
+    const colors = ["#00f5ff","#ff3df0","#ffe66d","#67ff7a","#ffffff"];
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+    const xKick = side === "left" ? rand(40, 260) : -rand(40, 260);
+    const drift = side === "left" ? rand(40, 320) : -rand(40, 320);
+
+    el.style.setProperty("--x0", `${xKick}px`);
+    el.style.setProperty("--x1", `${drift}px`);
+    el.style.setProperty("--rot", `${Math.floor(rand(540, 1400))}deg`);
+
+    const w = rand(7, 12);
+    const h = rand(10, 18);
+    el.style.width = `${w}px`;
+    el.style.height = `${h}px`;
+
+    const dur = rand(2.4, 4.4);
+    el.style.animationDuration = `${dur}s`;
+    el.style.animationDelay = `${rand(0, 0.25)}s`;
+    el.style.opacity = `${rand(0.75, 1)}`;
+
+    const ttl = (dur + 0.5) * 1000;
+    setTimeout(() => el.remove(), ttl);
+
+    return el;
+  }
+
+  function startConfetti(){
+    if (!confettiLayer) return;
+    confettiLayer.classList.add("on");
+    confettiLayer.innerHTML = "";
+
+    const burst = () => {
+      const nL = Math.floor(rand(5, 9));
+      const nR = Math.floor(rand(5, 9));
+      for(let i=0;i<nL;i++) confettiLayer.appendChild(makeConfettiPiece("left"));
+      for(let i=0;i<nR;i++) confettiLayer.appendChild(makeConfettiPiece("right"));
+    };
+
+    burst();
+    clearInterval(confettiInterval);
+    confettiInterval = setInterval(burst, 220);
+  }
+
+  function stopConfetti(){
+    if (!confettiLayer) return;
+    clearInterval(confettiInterval);
+    confettiInterval = null;
+    confettiLayer.classList.remove("on");
+    confettiLayer.innerHTML = "";
+  }
+
   function stopDisco(){
     document.body.classList.remove("disco");
+    stopConfetti();
     if (discoAudio){
       discoAudio.pause();
       discoAudio.currentTime = 0;
@@ -635,19 +741,19 @@ h1{margin:0;font-size:22px;font-weight:950;}
     }
     if (prefersReduce){
       toast("🧊 Reduced-motion enabled. Disco visuals disabled.", true);
-      // Still play audio if you want; keeping it OFF for reduced motion.
+      // If you still want audio in reduced-motion, uncomment below:
+      // discoAudio.currentTime = 0; discoAudio.volume=0.85; discoAudio.play().catch(()=>{});
       return;
     }
 
     document.body.classList.add("disco");
+    startConfetti();
 
     if (discoAudio){
       discoAudio.currentTime = 0;
       discoAudio.volume = 0.85;
       discoAudio.play().catch(() => {
-        // If browser blocks playback (rare since dblclick counts as gesture),
-        // user can try again.
-        toast("🔇 Tap again to enable sound.", false);
+        toast("🔇 Double-click again to enable sound.", false);
       });
     }
 
@@ -673,7 +779,6 @@ h1{margin:0;font-size:22px;font-weight:950;}
   // Panic redirect (press P): kills everything and jumps to panic.html
   function panicRedirect(){
     stopDisco();
-    // hard redirect so the party page is immediately gone
     window.location.replace("./panic.html");
   }
 
@@ -726,7 +831,6 @@ h1{margin:0;font-size:22px;font-weight:950;}
       }
     }
   });
-
 </script>
 </body>
 </html>
