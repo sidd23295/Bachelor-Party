@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kraken’s Bachelor Party HQ – Access Gate</title>
+  <title>Bachelor Party – Access Gate</title>
 
   <style>
     :root{
@@ -30,9 +30,7 @@
         radial-gradient(900px 600px at 50% 110%, rgba(255,230,109,0.10), transparent 55%),
         linear-gradient(180deg, #06060a, #0a0a10);
       overflow:hidden;
-      padding-bottom:92px; /* room for Code Dock */
     }
-
     .orb{
       position:absolute; width:280px; height:280px; border-radius:50%;
       filter:blur(50px); opacity:.35; mix-blend-mode:screen;
@@ -45,15 +43,6 @@
       0%{transform:translate(0,0) scale(1);}
       50%{transform:translate(40px,30px) scale(1.15);}
       100%{transform:translate(0,0) scale(1);}
-    }
-
-    .gridfx{
-      position:fixed; inset:0; pointer-events:none; opacity:.26;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 52px 52px;
-      mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1), rgba(0,0,0,0));
     }
 
     .wrap{
@@ -73,8 +62,6 @@
       box-shadow:0 20px 60px rgba(0,0,0,0.65);
       backdrop-filter: blur(10px);
       overflow:hidden;
-      transform-style:preserve-3d;
-      transition: transform .14s ease;
     }
 
     .topbar{
@@ -90,17 +77,9 @@
       display:flex;
       align-items:center;
       gap:12px;
-      font-weight:950;
+      font-weight:900;
       letter-spacing:.02em;
     }
-    .brand .subbrand{
-      color:rgba(255,255,255,0.78);
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:12px;
-    }
-
     .pill{
       font-size:12px;
       letter-spacing:.12em;
@@ -163,70 +142,6 @@
       font-weight:900;
     }
 
-    /* Gate hero branding */
-    .gateHero{
-      text-align:center;
-      margin: 4px auto 12px;
-      max-width: 60ch;
-      position:relative;
-    }
-    .gateKicker{
-      font-weight:1000;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color: rgba(255,255,255,0.88);
-      opacity:.95;
-      animation: floaty 2.6s ease-in-out infinite;
-    }
-    @keyframes floaty{
-      0%,100%{ transform: translateY(0); opacity:.92; }
-      50%{ transform: translateY(-6px); opacity:1; }
-    }
-    .gateTitle{
-      margin-top:6px;
-      font-size: clamp(34px, 4.2vw, 56px);
-      font-weight: 1000;
-      line-height: 1.02;
-      background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--neon3));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow:
-        0 0 18px rgba(0,245,255,0.16),
-        0 0 32px rgba(255,61,240,0.10);
-      position:relative;
-    }
-    .gateTitle::after{
-      content:"";
-      position:absolute;
-      inset:-10px -16px;
-      background: linear-gradient(90deg, transparent, rgba(0,245,255,0.14), rgba(255,61,240,0.12), transparent);
-      transform: translateX(-140%);
-      filter: blur(2px);
-      animation: shimmer 4.8s ease-in-out infinite;
-      pointer-events:none;
-      opacity:.9;
-    }
-    @keyframes shimmer{
-      0%{transform:translateX(-140%);}
-      50%{transform:translateX(40%);}
-      100%{transform:translateX(220%);}
-    }
-    .gateSub{
-      margin-top:10px;
-      color:#d7d7d7;
-      font-weight:850;
-      line-height:1.45;
-      opacity:.95;
-    }
-    .gateDivider{
-      width:min(520px, 86%);
-      height:1px;
-      margin:14px auto 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.20), transparent);
-      position:relative;
-    }
-
     /* Loading screen */
     .loadingStage{
       height: 420px;
@@ -241,9 +156,9 @@
     }
     .title{
       margin:10px 0 8px;
-      font-size: clamp(24px, 3.0vw, 36px);
+      font-size: clamp(26px, 3.5vw, 40px);
       font-weight:950;
-      text-shadow: 0 0 14px rgba(0,245,255,0.14), 0 0 28px rgba(255,61,240,0.10);
+      text-shadow: 0 0 14px rgba(0,245,255,0.18), 0 0 28px rgba(255,61,240,0.12);
     }
     .sub{
       margin:0 0 16px;
@@ -269,22 +184,11 @@
       animation:sweep 1.35s linear infinite;
     }
     @keyframes sweep{ 0%{transform:translateX(-120%);} 100%{transform:translateX(240%);} }
-
     .dots{display:flex; justify-content:center; gap:10px; margin:10px 0 18px;}
     .dot{width:10px;height:10px;border-radius:50%; background:var(--neon1); opacity:.8; animation:bounce 1s infinite ease-in-out; box-shadow:0 0 12px rgba(0,245,255,0.85);}
     .dot:nth-child(2){background:var(--neon2); animation-delay:.15s; box-shadow:0 0 12px rgba(255,61,240,0.85);}
     .dot:nth-child(3){background:var(--neon3); animation-delay:.30s; box-shadow:0 0 12px rgba(255,230,109,0.85);}
     @keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:.55;} 40%{transform:translateY(-10px);opacity:1;}}
-
-    /* Start button pulse */
-    #startBtn{
-      position:relative;
-      animation: btnPulse 1.6s ease-in-out infinite;
-    }
-    @keyframes btnPulse{
-      0%,100%{ transform: translateY(0); box-shadow: 0 0 0 3px rgba(0,245,255,0.10); }
-      50%{ transform: translateY(-1px); box-shadow: 0 0 0 6px rgba(255,61,240,0.10); }
-    }
 
     /* Game area */
     .arena{
@@ -334,33 +238,46 @@
     .stat b{font-weight:950;}
     .hint{color:var(--muted); font-size:12px; margin-left:auto;}
 
+    /* ✅ UPDATED TARGET: random circular images */
     .target{
       position:absolute;
       border-radius:50%;
       cursor:pointer;
       transform: translate(-50%, -50%);
-      background:
-        radial-gradient(circle at center, rgba(0,0,0,0) 38%, rgba(0,0,0,0.0) 39%),
-        radial-gradient(circle at center, rgba(0,245,255,0.20), rgba(255,61,240,0.12));
+      width: 62px;
+      height: 62px;
+
+      overflow:hidden; /* circular crop */
+      background: rgba(255,255,255,0.06);
       border:2px solid rgba(0,245,255,0.55);
       box-shadow:
         0 0 0 6px rgba(0,245,255,0.10),
         0 0 30px rgba(0,245,255,0.22),
         0 0 30px rgba(255,61,240,0.12);
+
       animation: pop .12s ease-out;
     }
-    .target::before, .target::after{
-      content:"";
-      position:absolute;
-      inset:10px;
+    .target img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
       border-radius:50%;
-      border:2px solid rgba(255,255,255,0.18);
+      transform: scale(1.08);
+      filter: saturate(1.05) contrast(1.05);
     }
     .target::after{
-      inset:22px;
-      border-color: rgba(255,61,240,0.30);
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius:50%;
+      pointer-events:none;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.10);
     }
-    @keyframes pop{ from{transform:translate(-50%,-50%) scale(.9); opacity:.6;} to{transform:translate(-50%,-50%) scale(1); opacity:1;}}
+    @keyframes pop{
+      from{transform:translate(-50%,-50%) scale(.9); opacity:.6;}
+      to{transform:translate(-50%,-50%) scale(1); opacity:1;}
+    }
 
     .crosshair{
       position:absolute;
@@ -428,10 +345,12 @@
       background:rgba(10,10,14,0.85);
       box-shadow:0 30px 80px rgba(0,0,0,0.7);
       padding:18px;
-      text-align:left;
+      text-align:center;
       position:relative;
       overflow:hidden;
     }
+    .modal h3{margin:8px 0 6px; font-size:24px; font-weight:950;}
+    .modal p{margin:0 0 12px; color:#d7d7d7; line-height:1.5;}
 
     /* CAPTCHA grid */
     .captchaGrid{
@@ -499,64 +418,6 @@
       0%,100%{ filter: drop-shadow(0 0 12px rgba(0,245,255,0.18)); opacity:0.90; }
       50%{ filter: drop-shadow(0 0 22px rgba(255,61,240,0.20)); opacity:1; }
     }
-
-    /* =========================
-       CODE DOCK (mobile keyboard)
-       ========================= */
-    .codeDock{
-      position:fixed;
-      left:12px;
-      right:12px;
-      bottom:12px;
-      z-index:999;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.14);
-      background:rgba(10,10,14,0.72);
-      backdrop-filter: blur(10px);
-      box-shadow:0 18px 50px rgba(0,0,0,0.55);
-    }
-    .dockLabel{
-      font-weight:950;
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      font-size:12px;
-      color:rgba(255,255,255,0.82);
-      white-space:nowrap;
-    }
-    .dockInput{
-      flex:1;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.14);
-      background:rgba(255,255,255,0.06);
-      color:#fff;
-      padding:10px 12px;
-      outline:none;
-      font-weight:850;
-      letter-spacing:.02em;
-    }
-    .dockInput::placeholder{ color: rgba(255,255,255,0.45); font-weight:800; }
-    .dockBtn{
-      border:none;
-      cursor:pointer;
-      border-radius:12px;
-      padding:10px 12px;
-      background:rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.14);
-      color:#fff;
-      font-weight:950;
-      white-space:nowrap;
-    }
-    .dockBtn:hover{ background: rgba(255,255,255,0.12); }
-    .dockHint{
-      display:none;
-    }
-    @media (max-width:520px){
-      .dockHint{ display:block; font-size:11px; color:rgba(255,255,255,0.55); margin-top:6px; }
-    }
   </style>
 </head>
 
@@ -564,12 +425,11 @@
   <div class="orb o1"></div>
   <div class="orb o2"></div>
   <div class="orb o3"></div>
-  <div class="gridfx" aria-hidden="true"></div>
 
   <div class="wrap">
-    <div class="card" id="tiltCard">
+    <div class="card">
       <div class="topbar">
-        <div class="brand">🐙 Kraken’s HQ <span class="subbrand">Access Gate</span></div>
+        <div class="brand">🎉 Bachelor Party HQ <span class="pill">Access Gate</span></div>
         <div style="display:flex; gap:10px; align-items:center;">
           <button class="btn" id="resetBtn" title="Resets unlock + score">Reset</button>
           <button class="btn primary" id="goIfUnlockedBtn" title="If already unlocked, go to HQ">Go to HQ</button>
@@ -587,17 +447,10 @@
           <!-- Loading -->
           <div class="loadingStage" id="loadingStage">
             <div class="loadingBox">
-              <div class="gateHero">
-                <div class="gateKicker">AUTHORIZED ONLY</div>
-                <div class="gateTitle">Kraken’s Bachelor Party HQ</div>
-                <div class="gateSub">Earn your entry. Then prove you’re not the groom.</div>
-                <div class="gateDivider"></div>
-              </div>
-
               <div class="title">Booting the Weekend Plan</div>
               <p class="sub">
-                Rule #1: Hit <b>10 markers in a row</b>.<br/>
-                Rule #2: Pass the photo check.
+                Step 1: Hit <b>10 markers in a row</b>.<br/>
+                Step 2: Pass the photo check.
               </p>
               <div class="sweep"></div>
               <div class="dots" aria-hidden="true">
@@ -624,21 +477,20 @@
         <!-- Right: instructions -->
         <div class="panel side">
           <h3>How it works</h3>
-          <p>This is the fun “door” into the real HQ page.</p>
+          <p>This is a fun “door” into the real bachelor party page.</p>
           <div class="rules">
-            <b>Rule #1 — Aim</b>
+            <b>Step 1 — Aim</b>
             <ul>
               <li>Hit 10 markers in a row.</li>
               <li>Miss (or timeout) resets streak to 0.</li>
             </ul>
             <div style="height:10px"></div>
-            <b>Rule #2 — Photo Check</b>
+            <b>Step 2 — Photo Check</b>
             <ul>
               <li>Click the square containing the groom’s face.</li>
               <li>Wrong click sends you back.</li>
             </ul>
           </div>
-          <div class="small">Pro tip: use the Code Dock below if you’re on mobile.</div>
         </div>
       </div>
     </div>
@@ -646,7 +498,7 @@
 
   <!-- CAPTCHA overlay -->
   <div class="overlay" id="captchaOverlay">
-    <div class="modal">
+    <div class="modal" style="text-align:left;">
       <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;">
         <div>
           <span class="pill">Final Check</span>
@@ -668,52 +520,42 @@
 
   <!-- TAKE IT overlay (5s) -->
   <div class="overlay" id="takeItOverlay">
-    <div class="modal" style="background:rgba(0,0,0,0.55); border-color:rgba(255,255,255,0.10); text-align:center;">
+    <div class="modal" style="background:rgba(0,0,0,0.55); border-color:rgba(255,255,255,0.10);">
       <p class="takeItText">TAKE IT TAKE IT TAKE IT</p>
       <p class="takeItSub">Entering HQ…</p>
     </div>
   </div>
 
-  <!-- CODE DOCK -->
-  <div class="codeDock" id="codeDock">
-    <div style="display:flex; flex-direction:column; gap:4px; flex:1;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div class="dockLabel">Code Dock</div>
-        <input
-          id="codeInput"
-          class="dockInput"
-          type="text"
-          inputmode="text"
-          autocomplete="off"
-          autocapitalize="none"
-          spellcheck="false"
-          placeholder="Type here (mobile keyboard fix)…"
-        />
-        <button class="dockBtn" id="focusBtn" type="button">⌨️</button>
-        <button class="dockBtn" id="clearBtn" type="button">Clear</button>
-      </div>
-      <div class="dockHint">Tap the input to bring up the keyboard.</div>
-    </div>
-  </div>
-
   <script>
     // =========================
-    // Config
+    // Config (tweak these)
     // =========================
     const REQUIRED_STREAK = 10;
-    const TARGET_TIMEOUT_MS = 1200;
-    const TARGET_SIZE_PX = 62;
 
-    // CAPTCHA
+    // Shooting difficulty
+    const TARGET_TIMEOUT_MS = 1200; // easier: 1600, harder: 900
+    const TARGET_SIZE_PX = 62;      // easier: 78, harder: 52
+
+    // ✅ NEW: random target images (put these in ./assets/)
+    const TARGET_IMAGES = [
+      "./assets/Arsenal.jpg",
+      "./assets/Kraken.jpg",
+      "./assets/Chinnal.jpg",
+      "./assets/Shreyas.jpg",
+      "./assets/Ajay.jpg"
+    ];
+
+    // ---- CAPTCHA config ----
     const CAPTCHA_IMAGE_URL = "./assets/Photo4Party.jpeg";
-    const CAPTCHA_GRID = 3;         // 3 => 3x3, 4 => 4x4
-    const CAPTCHA_CORRECT_TILE = 5; // <-- set this correctly
+    const CAPTCHA_GRID = 3;           // 3 => 3x3, 4 => 4x4
+    const CAPTCHA_CORRECT_TILE = 5;   // <-- set this to the tile containing the groom
+
+    // After correct captcha:
     const TAKE_IT_DURATION_MS = 5000;
 
     // =========================
     // Elements
     // =========================
-    const tiltCard = document.getElementById("tiltCard");
     const loadingStage = document.getElementById('loadingStage');
     const arena = document.getElementById('arena');
     const startBtn = document.getElementById('startBtn');
@@ -733,11 +575,6 @@
     const captchaResetBtn = document.getElementById("captchaResetBtn");
 
     const takeItOverlay = document.getElementById("takeItOverlay");
-
-    const codeInput = document.getElementById("codeInput");
-    const focusBtn = document.getElementById("focusBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const codeDock = document.getElementById("codeDock");
 
     // =========================
     // State
@@ -802,6 +639,9 @@
       showToast(reason + " — streak reset.", false);
     }
 
+    // ✅ Optional: preload target images so first spawns don’t lag
+    TARGET_IMAGES.forEach(src => { const i = new Image(); i.src = src; });
+
     // =========================
     // Shooting Game
     // =========================
@@ -826,6 +666,13 @@
       targetEl.style.left = x + "px";
       targetEl.style.top = y + "px";
 
+      // ✅ random image inside circular target
+      const img = document.createElement("img");
+      img.src = TARGET_IMAGES[Math.floor(Math.random() * TARGET_IMAGES.length)];
+      img.alt = "target";
+      img.draggable = false;
+      targetEl.appendChild(img);
+
       targetEl.addEventListener('click', (e) => {
         e.stopPropagation();
         if(!playing || !targetActive) return;
@@ -834,7 +681,7 @@
         hits += 1;
         streak += 1;
         updateHUD();
-        showToast("Hit! +1", true);
+        showToast("Hit! +" + 1, true);
 
         if(streak >= REQUIRED_STREAK){
           playing = false;
@@ -950,54 +797,6 @@
       streak = 0; hits = 0; misses = 0;
       updateHUD();
       showToast("Reset. Try again.", true);
-    });
-
-    // =========================
-    // Card tilt (subtle parallax)
-    // =========================
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-    document.addEventListener("mousemove", (e) => {
-      const r = tiltCard.getBoundingClientRect();
-      const cx = r.left + r.width/2;
-      const cy = r.top + r.height/2;
-      const dx = (e.clientX - cx) / (r.width/2);
-      const dy = (e.clientY - cy) / (r.height/2);
-      const rx = clamp(-dy * 3.2, -3.2, 3.2);
-      const ry = clamp(dx * 4.2, -4.2, 4.2);
-      tiltCard.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-    });
-    document.addEventListener("mouseleave", () => {
-      tiltCard.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
-    });
-
-    // =========================
-    // Code Dock (keyboard fix)
-    // =========================
-    function focusCodeInput(){
-      codeInput.focus({ preventScroll: true });
-      // iOS sometimes needs a tiny delay:
-      setTimeout(() => codeInput.focus({ preventScroll: true }), 50);
-    }
-    codeDock.addEventListener("click", (e) => {
-      if(e.target === focusBtn || e.target === clearBtn) return;
-      focusCodeInput();
-    });
-    focusBtn.addEventListener("click", (e) => { e.stopPropagation(); focusCodeInput(); });
-    clearBtn.addEventListener("click", (e) => { e.stopPropagation(); codeInput.value=""; focusCodeInput(); });
-
-    // (Optional admin cheat on the gate: type "kraken" -> unlock + go)
-    function handleGateCheat(){
-      const v = (codeInput.value || "").trim().toLowerCase();
-      if(v === "kraken"){
-        localStorage.setItem(UNLOCK_KEY, "true");
-        showToast("Kraken override ✅ Unlocked.", true);
-        codeInput.value = "";
-        setTimeout(()=> window.location.href="./party.html", 450);
-      }
-    }
-    codeInput.addEventListener("input", handleGateCheat);
-    codeInput.addEventListener("keydown", (e) => {
-      if(e.key === "Enter") handleGateCheat();
     });
 
     // =========================
