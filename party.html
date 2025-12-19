@@ -26,6 +26,7 @@ body{
     radial-gradient(1000px 650px at 90% 10%, rgba(255,61,240,0.14), transparent 60%),
     linear-gradient(180deg, #06060a, #0a0a10);
   color:var(--text);
+  padding-bottom:92px; /* room for Code Dock */
 }
 
 /* =====================
@@ -37,6 +38,26 @@ body.disco{
 @keyframes hueSpin{
   from{filter:hue-rotate(0deg);}
   to{filter:hue-rotate(360deg);}
+}
+
+/* subtle animated background shimmer in disco */
+body.disco::before{
+  content:"";
+  position:fixed;
+  inset:-40px;
+  pointer-events:none;
+  background:
+    radial-gradient(600px 380px at 10% 20%, rgba(0,245,255,0.12), transparent 55%),
+    radial-gradient(600px 380px at 85% 30%, rgba(255,61,240,0.10), transparent 55%),
+    radial-gradient(700px 420px at 50% 90%, rgba(255,230,109,0.08), transparent 60%);
+  filter: blur(0px);
+  opacity:0.9;
+  animation: discoDrift 3.6s ease-in-out infinite;
+  z-index:1;
+}
+@keyframes discoDrift{
+  0%,100%{ transform: translateY(0px); }
+  50%{ transform: translateY(-10px); }
 }
 
 /* =====================
@@ -81,9 +102,51 @@ body.disco{
 .confetti.right{ right: -10px; }
 
 /* =====================
+   DISCO OVERLAY
+   ===================== */
+.overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  place-items:center;
+  background:rgba(0,0,0,0.62);
+  z-index:250;
+  padding:18px;
+}
+.overlay.show{display:grid;}
+.modal{
+  width:min(720px, 92vw);
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(10,10,14,0.88);
+  box-shadow:0 30px 80px rgba(0,0,0,0.7);
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+}
+.bigTitle{
+  margin:0;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--warn));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 22px rgba(0,245,255,0.14), 0 0 28px rgba(255,61,240,0.10);
+}
+.subTitle{
+  margin:8px 0 0;
+  color:#d7d7d7;
+  font-weight:850;
+  line-height:1.45;
+}
+
+/* =====================
    LAYOUT
    ===================== */
-.wrap{padding:22px; display:grid; place-items:center;}
+.wrap{padding:22px; display:grid; place-items:center; position:relative; z-index:2;}
 .shell{
   width:min(1200px, 96vw);
   border-radius:22px;
@@ -92,6 +155,8 @@ body.disco{
   box-shadow:0 20px 70px rgba(0,0,0,0.65);
   backdrop-filter: blur(10px);
   overflow:hidden;
+  transform-style:preserve-3d;
+  transition: transform .14s ease;
 }
 header{
   padding:18px 20px;
@@ -256,7 +321,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
 .toast{
   position:fixed;
   left:50%;
-  bottom:16px;
+  bottom:104px; /* above dock */
   transform:translateX(-50%);
   padding:10px 12px;
   border-radius:12px;
@@ -275,27 +340,57 @@ h1{margin:0;font-size:22px;font-weight:950;}
   to{opacity:1; transform:translateX(-50%) translateY(0);}
 }
 
-/* ===== Overlay + Modal (cheat modal) ===== */
-.overlay{
+/* =========================
+   CODE DOCK
+   ========================= */
+.codeDock{
   position:fixed;
-  inset:0;
-  display:none;
-  place-items:center;
-  background:rgba(0,0,0,0.62);
-  z-index:250;
-  padding:18px;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  z-index:999;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(10,10,14,0.72);
+  backdrop-filter: blur(10px);
+  box-shadow:0 18px 50px rgba(0,0,0,0.55);
 }
-.overlay.show{display:grid;}
-.modal{
-  width:min(640px, 92vw);
-  border-radius:20px;
-  border:1px solid rgba(255,255,255,0.12);
-  background:rgba(10,10,14,0.88);
-  box-shadow:0 30px 80px rgba(0,0,0,0.7);
-  padding:18px;
-  position:relative;
-  overflow:hidden;
+.dockLabel{
+  font-weight:950;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-size:12px;
+  color:rgba(255,255,255,0.82);
+  white-space:nowrap;
 }
+.dockInput{
+  flex:1;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  padding:10px 12px;
+  outline:none;
+  font-weight:850;
+  letter-spacing:.02em;
+}
+.dockInput::placeholder{ color: rgba(255,255,255,0.45); font-weight:800; }
+.dockBtn{
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+  padding:10px 12px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.14);
+  color:#fff;
+  font-weight:950;
+  white-space:nowrap;
+}
+.dockBtn:hover{ background: rgba(255,255,255,0.12); }
 </style>
 </head>
 
@@ -310,7 +405,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
 </audio>
 
 <div class="wrap">
-  <div class="shell">
+  <div class="shell" id="tiltShell">
     <header>
       <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <h1 id="heroTitle">🐙 Kraken’s Bachelor Party HQ</h1>
@@ -385,7 +480,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
           </div>
 
           <div class="small" style="margin-top:12px;">
-            Hidden controls: type <b>kraken</b> to unlock Disco · double-click to toggle Disco · press <b>P</b> for Panic.
+            Tip: Use the Code Dock to type <b>kraken</b> (unlocks + starts Disco). Panic: type <b>panic</b> or press <b>P</b>.
           </div>
         </div>
       </section>
@@ -427,41 +522,70 @@ h1{margin:0;font-size:22px;font-weight:950;}
         <div style="margin-top:10px; font-size:22px; font-weight:950;">🐙 Kraken Identified</div>
         <div style="margin-top:6px; color:#d7d7d7; line-height:1.45;">
           Disco Mode is now unlocked.<br/>
-          Double-click anywhere to toggle Disco (10s). Confetti included.
+          Starting Disco…
         </div>
       </div>
       <button class="btn" id="krakenCloseBtn" aria-label="Close">✕</button>
     </div>
+  </div>
+</div>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-      <button class="btn primary" id="startDiscoBtn">Start Disco Now</button>
-      <button class="btn" id="closeKrakenBtn">Close</button>
-    </div>
-
-    <div class="small" style="margin-top:10px;">
-      Panic key <b>P</b> instantly exits to a top-secret page.
+<!-- Disco overlay -->
+<div class="overlay" id="discoOverlay">
+  <div class="modal" style="text-align:center;">
+    <div class="bigTitle">DISCO MODE</div>
+    <div class="subTitle">10 seconds of chaos. Confetti + music engaged.</div>
+    <div style="margin-top:14px; color:#d7d7d7; font-weight:850;">
+      (Ends automatically)
     </div>
   </div>
 </div>
 
+<!-- CODE DOCK -->
+<div class="codeDock" id="codeDock">
+  <div class="dockLabel">Code Dock</div>
+  <input
+    id="codeInput"
+    class="dockInput"
+    type="text"
+    inputmode="text"
+    autocomplete="off"
+    autocapitalize="none"
+    spellcheck="false"
+    placeholder="Type kraken to unlock + Disco…"
+  />
+  <button class="dockBtn" id="focusBtn" type="button">⌨️</button>
+  <button class="dockBtn" id="clearBtn" type="button">Clear</button>
+</div>
+
 <script>
   // -------------------------
-  // Fixed plan phases (for highlight only)
+  // Fixed plan phases (for highlight + hero title reaction)
   // -------------------------
   const phases = [
-    { key:"breakfast", label:"Breakfast", emoji:"🍳" },
-    { key:"arsenal", label:"Arsenal", emoji:"⚽" },
-    { key:"gaming", label:"Gaming", emoji:"🎮" },
-    { key:"dinner", label:"Dinner", emoji:"🥗" },
-    { key:"brooklyn", label:"Brooklyn", emoji:"🌃" },
-    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞" },
-    { key:"rpm", label:"RPM", emoji:"🏎️" }
+    { key:"breakfast", label:"Breakfast", emoji:"🍳", color:"var(--warn)" },
+    { key:"arsenal", label:"Arsenal", emoji:"⚽", color:"var(--neon2)" },
+    { key:"gaming", label:"Gaming", emoji:"🎮", color:"var(--neon1)" },
+    { key:"dinner", label:"Dinner", emoji:"🥗", color:"var(--good)" },
+    { key:"brooklyn", label:"Brooklyn", emoji:"🌃", color:"rgba(255,255,255,0.9)" },
+    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞", color:"var(--warn)" },
+    { key:"rpm", label:"RPM", emoji:"🏎️", color:"var(--neon2)" }
   ];
 
   // -------------------------
   // Local state (quests + selected phase)
   // -------------------------
-  const DATA_KEY = "bp_party_fixed_v2";
+  const DATA_KEY = "bp_party_fixed_v3";
+  const DISCO_UNLOCK_KEY = "bp_disco_unlocked_v1";
+
+  function cryptoRandomId(){
+    if (window.crypto?.getRandomValues) {
+      const buf = new Uint32Array(2);
+      crypto.getRandomValues(buf);
+      return buf[0].toString(16) + buf[1].toString(16);
+    }
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
 
   const defaultState = {
     phase: "breakfast",
@@ -487,34 +611,34 @@ h1{margin:0;font-size:22px;font-weight:950;}
   let state = loadState();
 
   // -------------------------
-  // Utilities
+  // Elements
   // -------------------------
-  function cryptoRandomId(){
-    if (window.crypto?.getRandomValues) {
-      const buf = new Uint32Array(2);
-      crypto.getRandomValues(buf);
-      return buf[0].toString(16) + buf[1].toString(16);
-    }
-    return Math.random().toString(16).slice(2) + Date.now().toString(16);
-  }
+  const heroTitle = document.getElementById("heroTitle");
+  const tiltShell = document.getElementById("tiltShell");
+  const toastEl = document.getElementById("toast");
 
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#39;");
-  }
+  const codeDock = document.getElementById("codeDock");
+  const codeInput = document.getElementById("codeInput");
+  const focusBtn = document.getElementById("focusBtn");
+  const clearBtn = document.getElementById("clearBtn");
 
+  const confettiLayer = document.getElementById("confettiLayer");
+  const discoAudio = document.getElementById("discoAudio");
+
+  const krakenOverlay = document.getElementById("krakenOverlay");
+  const krakenCloseBtn = document.getElementById("krakenCloseBtn");
+  const discoOverlay = document.getElementById("discoOverlay");
+
+  // -------------------------
+  // Toast
+  // -------------------------
   function toast(msg, good=true){
-    const el = document.getElementById("toast");
-    el.textContent = msg;
-    el.style.borderColor = good ? "rgba(103,255,122,0.35)" : "rgba(255,90,90,0.35)";
-    el.style.boxShadow = good ? "0 0 0 3px rgba(103,255,122,0.10)" : "0 0 0 3px rgba(255,90,90,0.10)";
-    el.classList.add("show");
+    toastEl.textContent = msg;
+    toastEl.style.borderColor = good ? "rgba(103,255,122,0.35)" : "rgba(255,90,90,0.35)";
+    toastEl.style.boxShadow = good ? "0 0 0 3px rgba(103,255,122,0.10)" : "0 0 0 3px rgba(255,90,90,0.10)";
+    toastEl.classList.add("show");
     clearTimeout(toast._t);
-    toast._t = setTimeout(()=> el.classList.remove("show"), 900);
+    toast._t = setTimeout(()=> toastEl.classList.remove("show"), 900);
   }
 
   // -------------------------
@@ -524,7 +648,6 @@ h1{margin:0;font-size:22px;font-weight:950;}
     try{
       const raw = localStorage.getItem(DATA_KEY);
       if(!raw) return structuredClone(defaultState);
-
       const parsed = JSON.parse(raw);
       return {
         phase: (typeof parsed.phase === "string" ? parsed.phase : defaultState.phase),
@@ -535,9 +658,9 @@ h1{margin:0;font-size:22px;font-weight:950;}
     }
   }
 
-  function saveState(){
+  function saveState(silent=false){
     localStorage.setItem(DATA_KEY, JSON.stringify(state));
-    toast("Saved ✅", true);
+    if(!silent) toast("Saved ✅", true);
     render();
   }
 
@@ -554,7 +677,8 @@ h1{margin:0;font-size:22px;font-weight:950;}
       btn.textContent = `${p.emoji} ${p.label}`;
       btn.addEventListener("click", () => {
         state.phase = p.key;
-        saveState();
+        saveState(true);
+        updateHero();
       });
       row.appendChild(btn);
     });
@@ -600,7 +724,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
 
       cb.addEventListener("change", () => {
         q.done = cb.checked;
-        saveState();
+        saveState(true);
       });
 
       del.addEventListener("click", () => {
@@ -616,17 +740,180 @@ h1{margin:0;font-size:22px;font-weight:950;}
     });
   }
 
+  function updateHero(){
+    const p = phases.find(x => x.key === state.phase) || phases[0];
+    heroTitle.textContent = `${p.emoji} Kraken’s Bachelor Party HQ — ${p.label}`;
+    heroTitle.style.textShadow = `0 0 18px rgba(0,0,0,0.0)`;
+    heroTitle.style.color = "var(--text)";
+    heroTitle.style.setProperty("filter", "none");
+    heroTitle.style.setProperty("text-shadow", `0 0 14px rgba(0,0,0,0.0)`);
+    heroTitle.style.setProperty("background", `none`);
+    heroTitle.style.setProperty("-webkit-background-clip", `initial`);
+    heroTitle.style.setProperty("background-clip", `initial`);
+    // subtle inline accent via box-shadow on header pill would be heavier; keep minimal:
+    heroTitle.style.borderBottom = `2px solid rgba(255,255,255,0.0)`;
+    heroTitle.style.setProperty("color", p.color);
+  }
+
   function render(){
     renderPhaseButtons();
     highlightPlan();
     renderQuests();
+    updateHero();
   }
 
   // -------------------------
-  // Wiring: quests
+  // Light parallax tilt
   // -------------------------
-  document.getElementById("saveBtn").addEventListener("click", saveState);
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+  document.addEventListener("mousemove", (e) => {
+    const r = tiltShell.getBoundingClientRect();
+    const cx = r.left + r.width/2;
+    const cy = r.top + r.height/2;
+    const dx = (e.clientX - cx) / (r.width/2);
+    const dy = (e.clientY - cy) / (r.height/2);
+    const rx = clamp(-dy * 2.4, -2.4, 2.4);
+    const ry = clamp(dx * 3.2, -3.2, 3.2);
+    tiltShell.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  document.addEventListener("mouseleave", () => {
+    tiltShell.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
+  });
 
+  // -------------------------
+  // Disco + Confetti
+  // -------------------------
+  let discoRunning = false;
+  const DISCO_MS = 10000;
+
+  function canDisco(){
+    return localStorage.getItem(DISCO_UNLOCK_KEY) === "true";
+  }
+
+  function unlockKrakenAndStartDisco(){
+    if(!canDisco()){
+      localStorage.setItem(DISCO_UNLOCK_KEY, "true");
+    }
+    krakenOverlay.classList.add("show");
+    setTimeout(() => {
+      krakenOverlay.classList.remove("show");
+      startDisco();
+    }, 650);
+  }
+
+  function startDisco(){
+    if(discoRunning) return;
+    if(!canDisco()){
+      toast("Disco is locked. Type kraken first.", false);
+      return;
+    }
+    discoRunning = true;
+
+    document.body.classList.add("disco");
+    discoOverlay.classList.add("show");
+    startConfettiCannons();
+    safePlayAudio();
+
+    setTimeout(() => {
+      stopDisco();
+    }, DISCO_MS);
+  }
+
+  function stopDisco(){
+    document.body.classList.remove("disco");
+    discoOverlay.classList.remove("show");
+    stopConfettiCannons();
+    safeStopAudio();
+    discoRunning = false;
+    toast("Disco ended. Back to business.", true);
+  }
+
+  function safePlayAudio(){
+    try{
+      discoAudio.currentTime = 0;
+      const p = discoAudio.play();
+      if(p && typeof p.catch === "function"){
+        p.catch(() => {
+          toast("Tap once anywhere to allow audio, then try again.", false);
+        });
+      }
+    } catch {}
+  }
+  function safeStopAudio(){
+    try{
+      discoAudio.pause();
+      discoAudio.currentTime = 0;
+    } catch {}
+  }
+
+  // Confetti generators (side cannons for 10s)
+  let confettiTimer = null;
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+
+  function makeConfetti(side){
+    const el = document.createElement("div");
+    el.className = "confetti " + side;
+
+    // random color without hardcoding a palette list
+    const hue = Math.floor(rand(0, 360));
+    el.style.background = `hsl(${hue} 92% 62%)`;
+
+    const x0 = rand(-18, 18);
+    const x1 = rand(-80, 80);
+    const rot = Math.floor(rand(180, 900)) + "deg";
+    el.style.setProperty("--x0", x0 + "px");
+    el.style.setProperty("--x1", x1 + "px");
+    el.style.setProperty("--rot", rot);
+
+    const dur = rand(3.5, 6.5);
+    el.style.animationDuration = dur + "s";
+
+    // spawn at random height offset so it feels like cannons
+    el.style.top = rand(-20, 40) + "px";
+    el.style.opacity = rand(0.75, 0.98);
+
+    confettiLayer.appendChild(el);
+
+    el.addEventListener("animationend", () => el.remove());
+  }
+
+  function startConfettiCannons(){
+    confettiLayer.innerHTML = "";
+    confettiLayer.classList.add("on");
+
+    const start = Date.now();
+    confettiTimer = setInterval(() => {
+      const t = Date.now() - start;
+      if(t > DISCO_MS){
+        stopConfettiCannons();
+        return;
+      }
+      // a few pieces from each side per tick
+      for(let i=0;i<4;i++){
+        makeConfetti("left");
+        makeConfetti("right");
+      }
+    }, 120);
+  }
+
+  function stopConfettiCannons(){
+    if(confettiTimer) clearInterval(confettiTimer);
+    confettiTimer = null;
+    confettiLayer.classList.remove("on");
+    confettiLayer.innerHTML = "";
+  }
+
+  // -------------------------
+  // Panic Mode
+  // -------------------------
+  function panic(){
+    window.location.href = "./panic.html";
+  }
+
+  // -------------------------
+  // Wiring (buttons)
+  // -------------------------
+  document.getElementById("saveBtn").addEventListener("click", () => saveState());
   document.getElementById("resetBtn").addEventListener("click", () => {
     if(!confirm("Reset side quests + selected phase on this device?")) return;
     localStorage.removeItem(DATA_KEY);
@@ -648,197 +935,73 @@ h1{margin:0;font-size:22px;font-weight:950;}
       `<span class="pill" style="border-color: rgba(255,61,240,0.35); color:#ddd;">Challenge</span> &nbsp; ${escapeHtml(pick)}`;
   });
 
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  // -------------------------
+  // Code Dock behavior
+  // -------------------------
+  function focusCodeInput(){
+    codeInput.focus({ preventScroll: true });
+    setTimeout(() => codeInput.focus({ preventScroll: true }), 50);
+  }
+  codeDock.addEventListener("click", (e) => {
+    if(e.target === focusBtn || e.target === clearBtn) return;
+    focusCodeInput();
+  });
+  focusBtn.addEventListener("click", (e) => { e.stopPropagation(); focusCodeInput(); });
+  clearBtn.addEventListener("click", (e) => { e.stopPropagation(); codeInput.value=""; focusCodeInput(); });
+
+  function handleDockCode(){
+    const v = (codeInput.value || "").trim().toLowerCase();
+    if(v === "kraken"){
+      codeInput.value = "";
+      unlockKrakenAndStartDisco(); // ✅ this is what you asked for
+    } else if(v === "panic"){
+      codeInput.value = "";
+      panic();
+    }
+  }
+  codeInput.addEventListener("input", handleDockCode);
+  codeInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") handleDockCode();
+    // stop global cheat capture while typing here
+    e.stopPropagation();
+  });
+
+  // -------------------------
+  // Optional global controls (won't interfere with input)
+  // -------------------------
+  document.addEventListener("keydown", (e) => {
+    // ignore when typing in input/textarea
+    const tag = (document.activeElement?.tagName || "").toLowerCase();
+    if(tag === "input" || tag === "textarea") return;
+
+    if(e.key.toLowerCase() === "p"){
+      panic();
+    }
+  });
+
+  // allow audio on first user gesture if browser blocks autoplay
+  document.addEventListener("pointerdown", () => {
+    if(discoRunning && discoAudio.paused){
+      safePlayAudio();
+    }
+  }, { passive:true });
+
+  // Kraken modal close
+  krakenCloseBtn.addEventListener("click", () => krakenOverlay.classList.remove("show"));
+
+  // -------------------------
   // Init
+  // -------------------------
   render();
-
-  // =========================
-  // Kraken unlock + Disco + Panic Redirect + Confetti
-  // =========================
-  const prefersReduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  // Disco state
-  let discoUnlocked = false;
-  let discoTimer = null;
-  const discoAudio = document.getElementById("discoAudio");
-  const DISCO_DURATION_MS = 10000;
-
-  // Confetti
-  const confettiLayer = document.getElementById("confettiLayer");
-  let confettiInterval = null;
-
-  function rand(min, max){ return Math.random() * (max - min) + min; }
-
-  function makeConfettiPiece(side){
-    const el = document.createElement("div");
-    el.className = `confetti ${side}`;
-
-    const colors = ["#00f5ff","#ff3df0","#ffe66d","#67ff7a","#ffffff"];
-    el.style.background = colors[Math.floor(Math.random()*colors.length)];
-
-    const xKick = side === "left" ? rand(40, 260) : -rand(40, 260);
-    const drift = side === "left" ? rand(40, 320) : -rand(40, 320);
-
-    el.style.setProperty("--x0", `${xKick}px`);
-    el.style.setProperty("--x1", `${drift}px`);
-    el.style.setProperty("--rot", `${Math.floor(rand(540, 1400))}deg`);
-
-    const w = rand(7, 12);
-    const h = rand(10, 18);
-    el.style.width = `${w}px`;
-    el.style.height = `${h}px`;
-
-    const dur = rand(2.4, 4.4);
-    el.style.animationDuration = `${dur}s`;
-    el.style.animationDelay = `${rand(0, 0.25)}s`;
-    el.style.opacity = `${rand(0.75, 1)}`;
-
-    const ttl = (dur + 0.5) * 1000;
-    setTimeout(() => el.remove(), ttl);
-
-    return el;
-  }
-
-  function startConfetti(){
-    if (!confettiLayer) return;
-    confettiLayer.classList.add("on");
-    confettiLayer.innerHTML = "";
-
-    const burst = () => {
-      const nL = Math.floor(rand(5, 9));
-      const nR = Math.floor(rand(5, 9));
-      for(let i=0;i<nL;i++) confettiLayer.appendChild(makeConfettiPiece("left"));
-      for(let i=0;i<nR;i++) confettiLayer.appendChild(makeConfettiPiece("right"));
-    };
-
-    burst();
-    clearInterval(confettiInterval);
-    confettiInterval = setInterval(burst, 220);
-  }
-
-  function stopConfetti(){
-    if (!confettiLayer) return;
-    clearInterval(confettiInterval);
-    confettiInterval = null;
-    confettiLayer.classList.remove("on");
-    confettiLayer.innerHTML = "";
-  }
-
-  function stopDisco(){
-    document.body.classList.remove("disco");
-    stopConfetti();
-    if (discoAudio){
-      discoAudio.pause();
-      discoAudio.currentTime = 0;
-    }
-    clearTimeout(discoTimer);
-    discoTimer = null;
-  }
-
-  function startDisco(){
-    if (!discoUnlocked){
-      toast("🔒 Disco locked.", false);
-      return;
-    }
-    if (prefersReduce){
-      toast("🧊 Reduced-motion enabled. Disco visuals disabled.", true);
-      // If you still want audio in reduced-motion, uncomment below:
-      // discoAudio.currentTime = 0; discoAudio.volume=0.85; discoAudio.play().catch(()=>{});
-      return;
-    }
-
-    document.body.classList.add("disco");
-    startConfetti();
-
-    if (discoAudio){
-      discoAudio.currentTime = 0;
-      discoAudio.volume = 0.85;
-      discoAudio.play().catch(() => {
-        toast("🔇 Double-click again to enable sound.", false);
-      });
-    }
-
-    toast("🪩 Disco Mode ON (10s).", true);
-
-    clearTimeout(discoTimer);
-    discoTimer = setTimeout(() => {
-      stopDisco();
-      toast("🧊 Disco Mode OFF.", true);
-    }, DISCO_DURATION_MS);
-  }
-
-  // Disco toggle ONLY after unlock (double-click)
-  window.addEventListener("dblclick", () => {
-    if (!discoUnlocked){
-      toast("🔒 Disco is locked. (Nice try.)", false);
-      return;
-    }
-    if (document.body.classList.contains("disco")) stopDisco();
-    else startDisco();
-  });
-
-  // Panic redirect (press P): kills everything and jumps to panic.html
-  function panicRedirect(){
-    stopDisco();
-    window.location.replace("./panic.html");
-  }
-
-  // Kraken cheat code unlock
-  let buffer = "";
-  const SECRET = "kraken";
-
-  const krakenOverlay = document.getElementById("krakenOverlay");
-  const krakenCloseBtn = document.getElementById("krakenCloseBtn");
-  const closeKrakenBtn = document.getElementById("closeKrakenBtn");
-  const startDiscoBtn = document.getElementById("startDiscoBtn");
-
-  function openKrakenModal(){
-    krakenOverlay.classList.add("show");
-  }
-  function closeKrakenModal(){
-    krakenOverlay.classList.remove("show");
-  }
-
-  krakenCloseBtn.addEventListener("click", closeKrakenModal);
-  closeKrakenBtn.addEventListener("click", closeKrakenModal);
-  startDiscoBtn.addEventListener("click", () => {
-    closeKrakenModal();
-    startDisco();
-  });
-
-  window.addEventListener("keydown", (e) => {
-    const t = e.target;
-    const typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable);
-    if (typing) return;
-
-    // Panic redirect
-    if (e.key.toLowerCase() === "p"){
-      panicRedirect();
-      return;
-    }
-
-    // Kraken buffer
-    if (e.key.length === 1){
-      buffer = (buffer + e.key.toLowerCase()).slice(-20);
-      if (buffer.includes(SECRET)){
-        buffer = "";
-        if (!discoUnlocked){
-          discoUnlocked = true;
-          toast("🐙 Kraken cheat activated. Disco unlocked.", true);
-          openKrakenModal();
-        } else {
-          toast("🐙 Kraken already active.", true);
-        }
-      }
-    }
-  });
 </script>
-
-  <!-- Mobile cheat-code input (helps bring up keyboard on phones) -->
-  <div id="mobileCodeDock" style="position:fixed; right:12px; bottom:12px; z-index:99; display:flex; gap:8px; align-items:center; padding:8px 10px; border-radius:14px; border:1px solid rgba(255,255,255,0.12); background:rgba(0,0,0,0.45); backdrop-filter: blur(10px);">
-    <span style="opacity:.7; font-weight:900; font-size:12px; letter-spacing:.08em; text-transform:uppercase;">Code</span>
-    <input id="mobileCode" inputmode="text" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false"
-      placeholder="tap + type" 
-      style="width:min(170px, 46vw); padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,0.14); background:rgba(0,0,0,0.18); color:#fff; font-weight:900; outline:none;" />
-  </div>
 </body>
 </html>
