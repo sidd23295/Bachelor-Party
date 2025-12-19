@@ -7,309 +7,1001 @@
 
 <style>
 :root{
-  --bg:#050509;
-  --panel:rgba(12,12,18,0.55);
-  --border:rgba(255,255,255,0.10);
+  --panel: rgba(0,0,0,0.18);
+  --border: rgba(255,255,255,0.10);
   --text:#f4f4f4;
   --muted:#bdbdbd;
   --neon1:#00f5ff;
   --neon2:#ff3df0;
-  --gold:#ffe66d;
+  --good:#67ff7a;
+  --bad:#ff5a5a;
+  --warn:#ffe66d;
 }
-*{box-sizing:border-box}
-
+*{box-sizing:border-box;}
 body{
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   background:
-    radial-gradient(900px 600px at 10% 0%, rgba(0,245,255,0.15), transparent 60%),
-    radial-gradient(900px 600px at 90% 10%, rgba(255,61,240,0.14), transparent 60%),
-    linear-gradient(180deg,#050509,#0a0a12);
+    radial-gradient(1000px 650px at 10% 0%, rgba(0,245,255,0.16), transparent 60%),
+    radial-gradient(1000px 650px at 90% 10%, rgba(255,61,240,0.14), transparent 60%),
+    linear-gradient(180deg, #06060a, #0a0a10);
   color:var(--text);
-  overflow-x:hidden;
+  padding-bottom:92px; /* room for Code Dock */
 }
 
-.wrap{padding:20px; display:grid; place-items:center}
+/* =====================
+   DISCO MODE (locked)
+   ===================== */
+body.disco{
+  animation: hueSpin 2.2s linear infinite;
+}
+@keyframes hueSpin{
+  from{filter:hue-rotate(0deg);}
+  to{filter:hue-rotate(360deg);}
+}
 
-.shell{
-  width:min(1200px,96vw);
-  border-radius:22px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  backdrop-filter:blur(10px);
-  box-shadow:0 30px 80px rgba(0,0,0,.7);
+/* subtle animated background shimmer in disco */
+body.disco::before{
+  content:"";
+  position:fixed;
+  inset:-40px;
+  pointer-events:none;
+  background:
+    radial-gradient(600px 380px at 10% 20%, rgba(0,245,255,0.12), transparent 55%),
+    radial-gradient(600px 380px at 85% 30%, rgba(255,61,240,0.10), transparent 55%),
+    radial-gradient(700px 420px at 50% 90%, rgba(255,230,109,0.08), transparent 60%);
+  filter: blur(0px);
+  opacity:0.9;
+  animation: discoDrift 3.6s ease-in-out infinite;
+  z-index:1;
+}
+@keyframes discoDrift{
+  0%,100%{ transform: translateY(0px); }
+  50%{ transform: translateY(-10px); }
+}
+
+/* =====================
+   Disco Confetti (10s)
+   Side cannons
+   ===================== */
+#confettiLayer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
+  overflow:hidden;
+  display:none;
+}
+#confettiLayer.on{ display:block; }
+
+.confetti{
+  position:absolute;
+  top:-12px;
+  width:10px;
+  height:16px;
+  border-radius:2px;
+  opacity:0.95;
+  transform: translate3d(0,0,0) rotate(0deg);
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.08));
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes confettiFall{
+  0%{
+    transform: translate3d(var(--x0), -20px, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100%{
+    transform: translate3d(var(--x1), 110vh, 0) rotate(var(--rot));
+    opacity: 0.95;
+  }
+}
+.confetti.left { left: -10px; }
+.confetti.right{ right: -10px; }
+
+/* =====================
+   DISCO OVERLAY
+   ===================== */
+.overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  place-items:center;
+  background:rgba(0,0,0,0.62);
+  z-index:250;
+  padding:18px;
+}
+.overlay.show{display:grid;}
+.modal{
+  width:min(720px, 92vw);
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(10,10,14,0.88);
+  box-shadow:0 30px 80px rgba(0,0,0,0.7);
+  padding:18px;
+  position:relative;
   overflow:hidden;
 }
+.bigTitle{
+  margin:0;
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight:1000;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  background: linear-gradient(90deg, var(--neon1), var(--neon2), var(--warn));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 22px rgba(0,245,255,0.14), 0 0 28px rgba(255,61,240,0.10);
+}
+.subTitle{
+  margin:8px 0 0;
+  color:#d7d7d7;
+  font-weight:850;
+  line-height:1.45;
+}
 
-/* Header */
+/* =====================
+   LAYOUT
+   ===================== */
+.wrap{padding:22px; display:grid; place-items:center; position:relative; z-index:2;}
+.shell{
+  width:min(1200px, 96vw);
+  border-radius:22px;
+  background: rgba(10,10,14,0.45);
+  border:1px solid var(--border);
+  box-shadow:0 20px 70px rgba(0,0,0,0.65);
+  backdrop-filter: blur(10px);
+  overflow:hidden;
+  transform-style:preserve-3d;
+  transition: transform .14s ease;
+}
 header{
   padding:18px 20px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px;
-  border-bottom:1px solid rgba(255,255,255,.08);
+  gap:10px;
+  flex-wrap:wrap;
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
-header h1{
-  margin:0;
-  font-size:22px;
-  font-weight:950;
-  letter-spacing:.02em;
-}
-
-/* Buttons */
-.btn{
-  border-radius:14px;
-  padding:10px 14px;
-  font-weight:900;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  cursor:pointer;
-}
-.btn:hover{background:rgba(255,255,255,.12)}
-.btn.primary{border-color:rgba(0,245,255,.5)}
-.btn.danger{border-color:rgba(255,90,90,.5)}
-
-/* Layout */
-.grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:14px;
-  padding:14px;
-}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
-
-.card{
-  border-radius:18px;
-  background:rgba(0,0,0,.25);
-  border:1px solid rgba(255,255,255,.1);
-}
-.card .h{
-  padding:14px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  font-weight:900;
+h1{margin:0;font-size:22px;font-weight:950;}
+.pill{
+  font-size:12px;
   letter-spacing:.12em;
   text-transform:uppercase;
   color:var(--muted);
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.04);
 }
-.card .b{padding:14px}
+.btn{
+  border:none;
+  border-radius:12px;
+  padding:10px 12px;
+  background:rgba(255,255,255,0.08);
+  color:var(--text);
+  font-weight:850;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,0.14);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+}
+.btn:hover{background:rgba(255,255,255,0.12);}
+.btn.primary{border-color:rgba(0,245,255,.5);}
+.btn.danger{border-color:rgba(255,90,90,.4);}
 
-/* Events */
+.grid{
+  display:grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap:14px;
+  padding:14px;
+}
+@media(max-width:900px){.grid{grid-template-columns:1fr;}}
+
+.card{
+  border-radius:18px;
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,0.10);
+  overflow:hidden;
+}
+.card .h{
+  padding:14px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.card .h h2{
+  margin:0;
+  font-size:14px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:900;
+}
+.card .b{padding:14px;}
+
+.phaseRow{display:flex;gap:8px;flex-wrap:wrap;}
+.phaseBtn{
+  border-radius:999px;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.04);
+  color:#eee;
+  cursor:pointer;
+  font-weight:900;
+}
+.phaseBtn.active{
+  border-color:rgba(0,245,255,.5);
+  background:rgba(0,245,255,.10);
+}
+
 .event{
-  padding:12px;
   border-radius:14px;
-  border:1px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.04);
+  padding:12px;
+  margin-bottom:10px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.04);
+  display:grid;
+  gap:8px;
+}
+.event.active{
+  border-color:rgba(255,61,240,.4);
+  box-shadow:0 0 0 3px rgba(255,61,240,.1);
+  background:rgba(255,61,240,.06);
+}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.14);
+  text-decoration:none;
+  color:#eee;
+  font-weight:850;
+  width:max-content;
+}
+.chip:hover{background:rgba(255,255,255,0.06);}
+.small{color:var(--muted); font-size:12px; line-height:1.5;}
+.note{
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,230,109,0.28);
+  background: rgba(255,230,109,0.08);
+  color:#f2f2f2;
+  line-height:1.45;
+  font-weight:850;
+  margin-bottom:12px;
+}
+
+/* Side quests */
+.questRow{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.04);
   margin-bottom:10px;
 }
-.event b{font-weight:950}
-
-.chip{
-  display:inline-block;
-  margin-top:6px;
-  padding:8px 12px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  text-decoration:none;
-  color:#fff;
-  font-weight:850;
-}
-
-/* Command bar */
-#commandDock{
-  position:fixed;
-  bottom:16px;
-  left:5050%;
-  transform:translateX(-50%);
-  width:min(360px,92vw);
-  z-index:999;
-}
-#commandInput{
-  width:100%;
-  padding:12px 16px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(0,0,0,.6);
-  color:#fff;
+.questRow input[type="checkbox"]{margin-top:4px;}
+.questText{
+  flex:1;
   font-weight:900;
-  letter-spacing:.12em;
-  outline:none;
+  line-height:1.35;
 }
+.questMeta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:3px;
+  line-height:1.35;
+}
+.iconBtn{
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+  padding:8px 10px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12);
+  color:#fff;
+  font-weight:950;
+}
+.iconBtn:hover{background:rgba(255,255,255,0.10);}
 
-/* Disco */
-body.disco{
-  animation:bgPulse .8s infinite alternate;
-}
-@keyframes bgPulse{
-  from{background-color:#050509}
-  to{background-color:#120018}
-}
-.confetti{
-  position:fixed;
-  top:-10px;
-  width:8px;
-  height:14px;
-  background:var(--neon1);
-  animation:fall 3s linear infinite;
-}
-@keyframes fall{
-  to{transform:translateY(110vh) rotate(360deg)}
-}
-
-/* Toast */
 .toast{
   position:fixed;
-  bottom:90px;
   left:50%;
+  bottom:104px; /* above dock */
   transform:translateX(-50%);
-  padding:10px 14px;
-  border-radius:14px;
-  background:rgba(0,0,0,.7);
+  padding:10px 12px;
+  border-radius:12px;
   font-weight:900;
+  border:1px solid rgba(255,255,255,0.16);
+  background:rgba(0,0,0,0.55);
+  color:#f1f1f1;
   display:none;
+  z-index:200;
+  max-width: min(92%, 520px);
+  text-align:center;
 }
-.toast.show{display:block}
+.toast.show{display:block; animation: toastIn .22s ease-out;}
+@keyframes toastIn{
+  from{opacity:0; transform:translateX(-50%) translateY(6px);}
+  to{opacity:1; transform:translateX(-50%) translateY(0);}
+}
+
+/* =========================
+   CODE DOCK
+   ========================= */
+.codeDock{
+  position:fixed;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  z-index:999;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(10,10,14,0.72);
+  backdrop-filter: blur(10px);
+  box-shadow:0 18px 50px rgba(0,0,0,0.55);
+}
+.dockLabel{
+  font-weight:950;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  font-size:12px;
+  color:rgba(255,255,255,0.82);
+  white-space:nowrap;
+}
+.dockInput{
+  flex:1;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.06);
+  color:#fff;
+  padding:10px 12px;
+  outline:none;
+  font-weight:850;
+  letter-spacing:.02em;
+}
+.dockInput::placeholder{ color: rgba(255,255,255,0.45); font-weight:800; }
+.dockBtn{
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+  padding:10px 12px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.14);
+  color:#fff;
+  font-weight:950;
+  white-space:nowrap;
+}
+.dockBtn:hover{ background: rgba(255,255,255,0.12); }
 </style>
 </head>
 
 <body>
+
+<!-- Confetti layer for disco mode -->
+<div id="confettiLayer" aria-hidden="true"></div>
+
+<!-- Disco audio (plays only when disco mode is active) -->
+<audio id="discoAudio" preload="auto" loop>
+  <source src="./assets/disco.mp3" type="audio/mpeg">
+</audio>
+
 <div class="wrap">
-<div class="shell">
+  <div class="shell" id="tiltShell">
+    <header>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h1 id="heroTitle">🐙 Kraken’s Bachelor Party HQ</h1>
+        <span class="pill">Fixed Plan</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn" id="saveBtn">Save</button>
+        <button class="btn danger" id="resetBtn">Reset Local Data</button>
+        <a class="btn primary" href="./index.html">Back to Gate</a>
+      </div>
+    </header>
 
-<header>
-  <h1>🦑 Kraken’s Bachelor Party HQ</h1>
-  <div>
-    <button class="btn danger" onclick="panic()">PANIC</button>
-    <a class="btn primary" href="./index.html">Back to Gate</a>
+    <div class="grid">
+      <!-- LEFT: Itinerary -->
+      <section class="card">
+        <div class="h">
+          <h2>2-Day Plan</h2>
+          <div class="phaseRow" id="phaseRow"></div>
+        </div>
+        <div class="b">
+          <div class="note">
+            ⚽ Arsenal game is at <b>12:30 PM</b> — we have to be at O'Hanlon’s by <b>11:30 AM</b>.
+          </div>
+
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div style="font-weight:950;">Day 1 — Saturday</div>
+            <span class="pill">End night in Brooklyn</span>
+          </div>
+
+          <div class="event" data-phase="breakfast">
+            <div style="font-weight:950;">🍳 Breakfast with drinks (NYC)</div>
+            <div class="small">Morning — pick a spot close to the route.</div>
+          </div>
+
+          <div class="event" data-phase="arsenal">
+            <div style="font-weight:950;">⚽ Arsenal Game Bar — O’Hanlon’s</div>
+            <div class="small"><b>Arrive 11:30 AM</b> · Game 12:30 PM</div>
+            <a class="chip" href="https://maps.app.goo.gl/byUTXxXsXC6XQDZRA" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="event" data-phase="gaming">
+            <div style="font-weight:950;">🎮 Gaming Cafe</div>
+            <a class="chip" href="https://maps.app.goo.gl/HNnmR7HFJsyVnaUf9" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="event" data-phase="dinner">
+            <div style="font-weight:950;">🥗 Vegan dinner</div>
+            <a class="chip" href="https://maps.app.goo.gl/UzuAtJY3tA6fr3n98" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="event" data-phase="brooklyn">
+            <div style="font-weight:950;">🌃 End night in Brooklyn</div>
+            <div class="small">Pick neighborhood + bars based on energy.</div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div style="font-weight:950;">Day 2 — Sunday</div>
+            <span class="pill">RPM opens 11 AM</span>
+          </div>
+
+          <div class="event" data-phase="sunday-breakfast">
+            <div style="font-weight:950;">🥞 Breakfast — Jersey City Diner</div>
+            <div class="small">Fuel up before karts.</div>
+          </div>
+
+          <div class="event" data-phase="rpm">
+            <div style="font-weight:950;">🏎️ Go Karting — RPM Raceway</div>
+            <div class="small"><b>Opens 11:00 AM</b></div>
+            <a class="chip" href="https://maps.app.goo.gl/ni2cSgXXZ6R4bcXm8" target="_blank" rel="noopener noreferrer">📍 Open in Maps</a>
+          </div>
+
+          <div class="small" style="margin-top:12px;">
+            Tip: Use the Code Dock to type <b>kraken</b> (unlocks + starts Disco). Panic: type <b>panic</b> or press <b>P</b>.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Side quests -->
+      <section class="card">
+        <div class="h">
+          <h2>Side Quests</h2>
+          <span class="pill">Saved locally</span>
+        </div>
+        <div class="b">
+          <div id="quests"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <button class="btn primary" id="addQuestBtn">Add Quest</button>
+            <button class="btn" id="randomChallengeBtn">Random Challenge</button>
+          </div>
+
+          <div id="challengeBox" class="small" style="margin-top:10px;"></div>
+        </div>
+      </section>
+    </div>
+
+    <footer style="padding:14px 14px 16px; color:var(--muted); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <div>Plan is fixed in code. Side quests save on this device.</div>
+      <div>🎉 Legendary *and* safe.</div>
+    </footer>
   </div>
-</header>
-
-<div class="grid">
-
-<!-- ITINERARY -->
-<section class="card">
-<div class="h">2-Day Itinerary</div>
-<div class="b">
-
-<div class="event">
-<b>Day 1 — Saturday</b>
-</div>
-
-<div class="event">
-🍳 Breakfast with drinks — NYC
-</div>
-
-<div class="event">
-⚽ Arsenal Game — O’Hanlon’s  
-<br><b>Arrive 11:30 AM · Kickoff 12:30 PM</b>
-<a class="chip" href="https://maps.app.goo.gl/byUTXxXsXC6XQDZRA" target="_blank">📍 Maps</a>
-</div>
-
-<div class="event">
-🎮 Gaming Cafe
-<a class="chip" href="https://maps.app.goo.gl/HNnmR7HFJsyVnaUf9" target="_blank">📍 Maps</a>
-</div>
-
-<div class="event">
-🥗 Vegan Dinner
-<a class="chip" href="https://maps.app.goo.gl/UzuAtJY3tA6fr3n98" target="_blank">📍 Maps</a>
-</div>
-
-<div class="event">
-🌃 End Night in Brooklyn
-</div>
-
-<div class="event">
-<b>Day 2 — Sunday</b>
-</div>
-
-<div class="event">
-🥞 Breakfast — Jersey City Diner
-</div>
-
-<div class="event">
-🏎 RPM Raceway — Opens 11 AM
-<a class="chip" href="https://maps.app.goo.gl/ni2cSgXXZ6R4bcXm8" target="_blank">📍 Maps</a>
-</div>
-
-</div>
-</section>
-
-<!-- RULES -->
-<section class="card">
-<div class="h">Rules</div>
-<div class="b">
-<p><b>Rule #1:</b> The groom is always right.</p>
-<p><b>Rule #2:</b> See Rule #1.</p>
-<p style="opacity:.7;font-size:13px;">Some features unlock only when the groom allows it.</p>
-</div>
-</section>
-
-</div>
-</div>
-</div>
-
-<!-- Command Bar -->
-<div id="commandDock">
-<input id="commandInput" placeholder="type command…" />
 </div>
 
 <div class="toast" id="toast"></div>
-<audio id="discoAudio" src="disco.mp3"></audio>
+
+<!-- Kraken unlock modal -->
+<div class="overlay" id="krakenOverlay">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+      <div>
+        <span class="pill">Cheat Code</span>
+        <div style="margin-top:10px; font-size:22px; font-weight:950;">🐙 Kraken Identified</div>
+        <div style="margin-top:6px; color:#d7d7d7; line-height:1.45;">
+          Disco Mode is now unlocked.<br/>
+          Starting Disco…
+        </div>
+      </div>
+      <button class="btn" id="krakenCloseBtn" aria-label="Close">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Disco overlay -->
+<div class="overlay" id="discoOverlay">
+  <div class="modal" style="text-align:center;">
+    <div class="bigTitle">DISCO MODE</div>
+    <div class="subTitle">10 seconds of chaos. Confetti + music engaged.</div>
+    <div style="margin-top:14px; color:#d7d7d7; font-weight:850;">
+      (Ends automatically)
+    </div>
+  </div>
+</div>
+
+<!-- CODE DOCK -->
+<div class="codeDock" id="codeDock">
+  <div class="dockLabel">Code Dock</div>
+  <input
+    id="codeInput"
+    class="dockInput"
+    type="text"
+    inputmode="text"
+    autocomplete="off"
+    autocapitalize="none"
+    spellcheck="false"
+    placeholder="Type kraken to unlock + Disco…"
+  />
+  <button class="dockBtn" id="focusBtn" type="button">⌨️</button>
+  <button class="dockBtn" id="clearBtn" type="button">Clear</button>
+</div>
 
 <script>
-const input=document.getElementById("commandInput");
-const toast=document.getElementById("toast");
-const audio=document.getElementById("discoAudio");
+  // -------------------------
+  // Fixed plan phases (for highlight + hero title reaction)
+  // -------------------------
+  const phases = [
+    { key:"breakfast", label:"Breakfast", emoji:"🍳", color:"var(--warn)" },
+    { key:"arsenal", label:"Arsenal", emoji:"⚽", color:"var(--neon2)" },
+    { key:"gaming", label:"Gaming", emoji:"🎮", color:"var(--neon1)" },
+    { key:"dinner", label:"Dinner", emoji:"🥗", color:"var(--good)" },
+    { key:"brooklyn", label:"Brooklyn", emoji:"🌃", color:"rgba(255,255,255,0.9)" },
+    { key:"sunday-breakfast", label:"Sunday", emoji:"🥞", color:"var(--warn)" },
+    { key:"rpm", label:"RPM", emoji:"🏎️", color:"var(--neon2)" }
+  ];
 
-let cheatUnlocked=localStorage.getItem("kraken")==="true";
+  // -------------------------
+  // Local state (quests + selected phase)
+  // -------------------------
+  const DATA_KEY = "bp_party_fixed_v3";
+  const DISCO_UNLOCK_KEY = "bp_disco_unlocked_v1";
 
-function showToast(msg){
-  toast.textContent=msg;
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),1200);
-}
-
-function panic(){
-  window.location.href="./panic.html";
-}
-
-function disco(){
-  if(!cheatUnlocked){showToast("Access denied.");return;}
-  document.body.classList.add("disco");
-  audio.currentTime=0;
-  audio.play();
-
-  for(let i=0;i<120;i++){
-    const c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"vw";
-    c.style.background=["#00f5ff","#ff3df0","#ffe66d"][i%3];
-    c.style.animationDuration=2+Math.random()*2+"s";
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),10000);
+  function cryptoRandomId(){
+    if (window.crypto?.getRandomValues) {
+      const buf = new Uint32Array(2);
+      crypto.getRandomValues(buf);
+      return buf[0].toString(16) + buf[1].toString(16);
+    }
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
   }
 
-  setTimeout(()=>{
+  const defaultState = {
+    phase: "breakfast",
+    quests: [
+      { id: cryptoRandomId(), text:"Breakfast: everyone orders one wildcard item.", done:false },
+      { id: cryptoRandomId(), text:"Arsenal: first person to arrive gets ‘captain’ status.", done:false },
+      { id: cryptoRandomId(), text:"Gaming: MVP names the team. Losers buy dessert.", done:false },
+      { id: cryptoRandomId(), text:"Dinner: order one dish no one has tried before.", done:false },
+      { id: cryptoRandomId(), text:"RPM: screenshot fastest lap — crown the king.", done:false },
+    ]
+  };
+
+  const randomChallenges = [
+    "At the next stop: everyone orders for the person to their right (one drink).",
+    "10-minute no-phone round.",
+    "Group photo with a stranger taking it (no selfies).",
+    "MVP must do a 30-second toast—no notes.",
+    "Loser buys fries for the table.",
+    "RPM: last place picks the next stop (reasonable).",
+    "Gaming: pistols-only round (or any fun constraint)."
+  ];
+
+  let state = loadState();
+
+  // -------------------------
+  // Elements
+  // -------------------------
+  const heroTitle = document.getElementById("heroTitle");
+  const tiltShell = document.getElementById("tiltShell");
+  const toastEl = document.getElementById("toast");
+
+  const codeDock = document.getElementById("codeDock");
+  const codeInput = document.getElementById("codeInput");
+  const focusBtn = document.getElementById("focusBtn");
+  const clearBtn = document.getElementById("clearBtn");
+
+  const confettiLayer = document.getElementById("confettiLayer");
+  const discoAudio = document.getElementById("discoAudio");
+
+  const krakenOverlay = document.getElementById("krakenOverlay");
+  const krakenCloseBtn = document.getElementById("krakenCloseBtn");
+  const discoOverlay = document.getElementById("discoOverlay");
+
+  // -------------------------
+  // Toast
+  // -------------------------
+  function toast(msg, good=true){
+    toastEl.textContent = msg;
+    toastEl.style.borderColor = good ? "rgba(103,255,122,0.35)" : "rgba(255,90,90,0.35)";
+    toastEl.style.boxShadow = good ? "0 0 0 3px rgba(103,255,122,0.10)" : "0 0 0 3px rgba(255,90,90,0.10)";
+    toastEl.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> toastEl.classList.remove("show"), 900);
+  }
+
+  // -------------------------
+  // Persistence
+  // -------------------------
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(DATA_KEY);
+      if(!raw) return structuredClone(defaultState);
+      const parsed = JSON.parse(raw);
+      return {
+        phase: (typeof parsed.phase === "string" ? parsed.phase : defaultState.phase),
+        quests: Array.isArray(parsed.quests) ? parsed.quests : structuredClone(defaultState.quests)
+      };
+    } catch {
+      return structuredClone(defaultState);
+    }
+  }
+
+  function saveState(silent=false){
+    localStorage.setItem(DATA_KEY, JSON.stringify(state));
+    if(!silent) toast("Saved ✅", true);
+    render();
+  }
+
+  // -------------------------
+  // Render
+  // -------------------------
+  function renderPhaseButtons(){
+    const row = document.getElementById("phaseRow");
+    row.innerHTML = "";
+
+    phases.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = "phaseBtn" + (state.phase === p.key ? " active" : "");
+      btn.textContent = `${p.emoji} ${p.label}`;
+      btn.addEventListener("click", () => {
+        state.phase = p.key;
+        saveState(true);
+        updateHero();
+      });
+      row.appendChild(btn);
+    });
+  }
+
+  function highlightPlan(){
+    document.querySelectorAll(".event").forEach(ev => {
+      const ph = ev.getAttribute("data-phase");
+      ev.classList.toggle("active", ph === state.phase);
+    });
+  }
+
+  function renderQuests(){
+    const root = document.getElementById("quests");
+    root.innerHTML = "";
+
+    state.quests.forEach((q) => {
+      const row = document.createElement("div");
+      row.className = "questRow";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!q.done;
+
+      const mid = document.createElement("div");
+      mid.style.flex = "1";
+
+      const title = document.createElement("div");
+      title.className = "questText";
+      title.textContent = q.text;
+
+      const meta = document.createElement("div");
+      meta.className = "questMeta";
+      meta.textContent = q.done ? "Completed. Respect." : "Unfinished business.";
+
+      mid.appendChild(title);
+      mid.appendChild(meta);
+
+      const del = document.createElement("button");
+      del.className = "iconBtn";
+      del.title = "Delete";
+      del.textContent = "✕";
+
+      cb.addEventListener("change", () => {
+        q.done = cb.checked;
+        saveState(true);
+      });
+
+      del.addEventListener("click", () => {
+        state.quests = state.quests.filter(x => x.id !== q.id);
+        saveState();
+      });
+
+      row.appendChild(cb);
+      row.appendChild(mid);
+      row.appendChild(del);
+
+      root.appendChild(row);
+    });
+  }
+
+  function updateHero(){
+    const p = phases.find(x => x.key === state.phase) || phases[0];
+    heroTitle.textContent = `${p.emoji} Kraken’s Bachelor Party HQ — ${p.label}`;
+    heroTitle.style.textShadow = `0 0 18px rgba(0,0,0,0.0)`;
+    heroTitle.style.color = "var(--text)";
+    heroTitle.style.setProperty("filter", "none");
+    heroTitle.style.setProperty("text-shadow", `0 0 14px rgba(0,0,0,0.0)`);
+    heroTitle.style.setProperty("background", `none`);
+    heroTitle.style.setProperty("-webkit-background-clip", `initial`);
+    heroTitle.style.setProperty("background-clip", `initial`);
+    // subtle inline accent via box-shadow on header pill would be heavier; keep minimal:
+    heroTitle.style.borderBottom = `2px solid rgba(255,255,255,0.0)`;
+    heroTitle.style.setProperty("color", p.color);
+  }
+
+  function render(){
+    renderPhaseButtons();
+    highlightPlan();
+    renderQuests();
+    updateHero();
+  }
+
+  // -------------------------
+  // Light parallax tilt
+  // -------------------------
+  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+  document.addEventListener("mousemove", (e) => {
+    const r = tiltShell.getBoundingClientRect();
+    const cx = r.left + r.width/2;
+    const cy = r.top + r.height/2;
+    const dx = (e.clientX - cx) / (r.width/2);
+    const dy = (e.clientY - cy) / (r.height/2);
+    const rx = clamp(-dy * 2.4, -2.4, 2.4);
+    const ry = clamp(dx * 3.2, -3.2, 3.2);
+    tiltShell.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  document.addEventListener("mouseleave", () => {
+    tiltShell.style.transform = `perspective(900px) rotateX(0deg) rotateY(0deg)`;
+  });
+
+  // -------------------------
+  // Disco + Confetti
+  // -------------------------
+  let discoRunning = false;
+  const DISCO_MS = 10000;
+
+  function canDisco(){
+    return localStorage.getItem(DISCO_UNLOCK_KEY) === "true";
+  }
+
+  function unlockKrakenAndStartDisco(){
+    if(!canDisco()){
+      localStorage.setItem(DISCO_UNLOCK_KEY, "true");
+    }
+    krakenOverlay.classList.add("show");
+    setTimeout(() => {
+      krakenOverlay.classList.remove("show");
+      startDisco();
+    }, 650);
+  }
+
+  function startDisco(){
+    if(discoRunning) return;
+    if(!canDisco()){
+      toast("Disco is locked. Type kraken first.", false);
+      return;
+    }
+    discoRunning = true;
+
+    document.body.classList.add("disco");
+    discoOverlay.classList.add("show");
+    startConfettiCannons();
+    safePlayAudio();
+
+    setTimeout(() => {
+      stopDisco();
+    }, DISCO_MS);
+  }
+
+  function stopDisco(){
     document.body.classList.remove("disco");
-    audio.pause();
-  },10000);
-}
-
-input.addEventListener("keydown",e=>{
-  if(e.key!=="Enter")return;
-  const v=input.value.trim().toLowerCase();
-  input.value="";
-  if(v==="kraken"){
-    cheatUnlocked=true;
-    localStorage.setItem("kraken","true");
-    showToast("🦑 KRAKEN MODE UNLOCKED");
-    disco();
-  }else{
-    showToast("Unknown command");
+    discoOverlay.classList.remove("show");
+    stopConfettiCannons();
+    safeStopAudio();
+    discoRunning = false;
+    toast("Disco ended. Back to business.", true);
   }
-});
+
+  function safePlayAudio(){
+    try{
+      discoAudio.currentTime = 0;
+      const p = discoAudio.play();
+      if(p && typeof p.catch === "function"){
+        p.catch(() => {
+          toast("Tap once anywhere to allow audio, then try again.", false);
+        });
+      }
+    } catch {}
+  }
+  function safeStopAudio(){
+    try{
+      discoAudio.pause();
+      discoAudio.currentTime = 0;
+    } catch {}
+  }
+
+  // Confetti generators (side cannons for 10s)
+  let confettiTimer = null;
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+
+  function makeConfetti(side){
+    const el = document.createElement("div");
+    el.className = "confetti " + side;
+
+    // random color without hardcoding a palette list
+    const hue = Math.floor(rand(0, 360));
+    el.style.background = `hsl(${hue} 92% 62%)`;
+
+    const x0 = rand(-18, 18);
+    const x1 = rand(-80, 80);
+    const rot = Math.floor(rand(180, 900)) + "deg";
+    el.style.setProperty("--x0", x0 + "px");
+    el.style.setProperty("--x1", x1 + "px");
+    el.style.setProperty("--rot", rot);
+
+    const dur = rand(3.5, 6.5);
+    el.style.animationDuration = dur + "s";
+
+    // spawn at random height offset so it feels like cannons
+    el.style.top = rand(-20, 40) + "px";
+    el.style.opacity = rand(0.75, 0.98);
+
+    confettiLayer.appendChild(el);
+
+    el.addEventListener("animationend", () => el.remove());
+  }
+
+  function startConfettiCannons(){
+    confettiLayer.innerHTML = "";
+    confettiLayer.classList.add("on");
+
+    const start = Date.now();
+    confettiTimer = setInterval(() => {
+      const t = Date.now() - start;
+      if(t > DISCO_MS){
+        stopConfettiCannons();
+        return;
+      }
+      // a few pieces from each side per tick
+      for(let i=0;i<4;i++){
+        makeConfetti("left");
+        makeConfetti("right");
+      }
+    }, 120);
+  }
+
+  function stopConfettiCannons(){
+    if(confettiTimer) clearInterval(confettiTimer);
+    confettiTimer = null;
+    confettiLayer.classList.remove("on");
+    confettiLayer.innerHTML = "";
+  }
+
+  // -------------------------
+  // Panic Mode
+  // -------------------------
+  function panic(){
+    window.location.href = "./panic.html";
+  }
+
+  // -------------------------
+  // Wiring (buttons)
+  // -------------------------
+  document.getElementById("saveBtn").addEventListener("click", () => saveState());
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if(!confirm("Reset side quests + selected phase on this device?")) return;
+    localStorage.removeItem(DATA_KEY);
+    state = structuredClone(defaultState);
+    render();
+    toast("Reset ✅", true);
+  });
+
+  document.getElementById("addQuestBtn").addEventListener("click", () => {
+    const text = prompt("Add a side quest:");
+    if(!text || !text.trim()) return;
+    state.quests.unshift({ id: cryptoRandomId(), text: text.trim(), done:false });
+    saveState();
+  });
+
+  document.getElementById("randomChallengeBtn").addEventListener("click", () => {
+    const pick = randomChallenges[Math.floor(Math.random() * randomChallenges.length)];
+    document.getElementById("challengeBox").innerHTML =
+      `<span class="pill" style="border-color: rgba(255,61,240,0.35); color:#ddd;">Challenge</span> &nbsp; ${escapeHtml(pick)}`;
+  });
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  // -------------------------
+  // Code Dock behavior
+  // -------------------------
+  function focusCodeInput(){
+    codeInput.focus({ preventScroll: true });
+    setTimeout(() => codeInput.focus({ preventScroll: true }), 50);
+  }
+  codeDock.addEventListener("click", (e) => {
+    if(e.target === focusBtn || e.target === clearBtn) return;
+    focusCodeInput();
+  });
+  focusBtn.addEventListener("click", (e) => { e.stopPropagation(); focusCodeInput(); });
+  clearBtn.addEventListener("click", (e) => { e.stopPropagation(); codeInput.value=""; focusCodeInput(); });
+
+  function handleDockCode(){
+    const v = (codeInput.value || "").trim().toLowerCase();
+    if(v === "kraken"){
+      codeInput.value = "";
+      unlockKrakenAndStartDisco(); // ✅ this is what you asked for
+    } else if(v === "panic"){
+      codeInput.value = "";
+      panic();
+    }
+  }
+  codeInput.addEventListener("input", handleDockCode);
+  codeInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") handleDockCode();
+    // stop global cheat capture while typing here
+    e.stopPropagation();
+  });
+
+  // -------------------------
+  // Optional global controls (won't interfere with input)
+  // -------------------------
+  document.addEventListener("keydown", (e) => {
+    // ignore when typing in input/textarea
+    const tag = (document.activeElement?.tagName || "").toLowerCase();
+    if(tag === "input" || tag === "textarea") return;
+
+    if(e.key.toLowerCase() === "p"){
+      panic();
+    }
+  });
+
+  // allow audio on first user gesture if browser blocks autoplay
+  document.addEventListener("pointerdown", () => {
+    if(discoRunning && discoAudio.paused){
+      safePlayAudio();
+    }
+  }, { passive:true });
+
+  // Kraken modal close
+  krakenCloseBtn.addEventListener("click", () => krakenOverlay.classList.remove("show"));
+
+  // -------------------------
+  // Init
+  // -------------------------
+  render();
 </script>
 </body>
 </html>
