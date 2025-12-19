@@ -238,7 +238,7 @@
     .stat b{font-weight:950;}
     .hint{color:var(--muted); font-size:12px; margin-left:auto;}
 
-    /* ✅ UPDATED TARGET: random circular images */
+    /* Target: circular cropped images */
     .target{
       position:absolute;
       border-radius:50%;
@@ -247,7 +247,7 @@
       width: 62px;
       height: 62px;
 
-      overflow:hidden; /* circular crop */
+      overflow:hidden;
       background: rgba(255,255,255,0.06);
       border:2px solid rgba(0,245,255,0.55);
       box-shadow:
@@ -349,8 +349,6 @@
       position:relative;
       overflow:hidden;
     }
-    .modal h3{margin:8px 0 6px; font-size:24px; font-weight:950;}
-    .modal p{margin:0 0 12px; color:#d7d7d7; line-height:1.5;}
 
     /* CAPTCHA grid */
     .captchaGrid{
@@ -457,7 +455,7 @@
                 <div class="dot"></div><div class="dot"></div><div class="dot"></div>
               </div>
               <button class="btn primary" id="startBtn">Start Challenge</button>
-              <div class="small">Tip: Tap/click the glowing marker. Miss or timeout = streak resets.</div>
+              <div class="small">Tip: Tap/click the target. Miss or timeout = streak resets.</div>
             </div>
           </div>
 
@@ -467,7 +465,7 @@
               <div class="stat">🎯 Streak: <b id="streak">0</b> / 10</div>
               <div class="stat">✅ Hits: <b id="hits">0</b></div>
               <div class="stat">❌ Misses: <b id="misses">0</b></div>
-              <div class="hint">Hit the marker before it times out.</div>
+              <div class="hint">Hit the target before it times out.</div>
             </div>
             <div class="crosshair" aria-hidden="true"><div class="v"></div><div class="h"></div></div>
             <div class="toast" id="toast"></div>
@@ -481,7 +479,7 @@
           <div class="rules">
             <b>Step 1 — Aim</b>
             <ul>
-              <li>Hit 10 markers in a row.</li>
+              <li>Hit 10 targets in a row.</li>
               <li>Miss (or timeout) resets streak to 0.</li>
             </ul>
             <div style="height:10px"></div>
@@ -528,7 +526,7 @@
 
   <script>
     // =========================
-    // Config (tweak these)
+    // Config
     // =========================
     const REQUIRED_STREAK = 10;
 
@@ -536,7 +534,7 @@
     const TARGET_TIMEOUT_MS = 1200; // easier: 1600, harder: 900
     const TARGET_SIZE_PX = 62;      // easier: 78, harder: 52
 
-    // ✅ NEW: random target images (put these in ./assets/)
+    // Target images (put these in ./assets/)
     const TARGET_IMAGES = [
       "./assets/Arsenal.jpg",
       "./assets/Kraken.jpg",
@@ -544,6 +542,24 @@
       "./assets/Shreyas.jpg",
       "./assets/Ajay.jpg"
     ];
+
+    // ---- Cycle all 5 before repeating (shuffle bag) ----
+    let targetBag = [];
+    function refillTargetBag(){
+      targetBag = [...TARGET_IMAGES];
+      for(let i = targetBag.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [targetBag[i], targetBag[j]] = [targetBag[j], targetBag[i]];
+      }
+    }
+    function nextTargetImage(){
+      if(targetBag.length === 0) refillTargetBag();
+      return targetBag.pop();
+    }
+    refillTargetBag();
+
+    // Preload for smoother first spawns
+    TARGET_IMAGES.forEach(src => { const i = new Image(); i.src = src; });
 
     // ---- CAPTCHA config ----
     const CAPTCHA_IMAGE_URL = "./assets/Photo4Party.jpeg";
@@ -639,9 +655,6 @@
       showToast(reason + " — streak reset.", false);
     }
 
-    // ✅ Optional: preload target images so first spawns don’t lag
-    TARGET_IMAGES.forEach(src => { const i = new Image(); i.src = src; });
-
     // =========================
     // Shooting Game
     // =========================
@@ -666,9 +679,9 @@
       targetEl.style.left = x + "px";
       targetEl.style.top = y + "px";
 
-      // ✅ random image inside circular target
+      // ✅ cycle-through image bag
       const img = document.createElement("img");
-      img.src = TARGET_IMAGES[Math.floor(Math.random() * TARGET_IMAGES.length)];
+      img.src = nextTargetImage();
       img.alt = "target";
       img.draggable = false;
       targetEl.appendChild(img);
@@ -681,7 +694,7 @@
         hits += 1;
         streak += 1;
         updateHUD();
-        showToast("Hit! +" + 1, true);
+        showToast("Hit! +1", true);
 
         if(streak >= REQUIRED_STREAK){
           playing = false;
