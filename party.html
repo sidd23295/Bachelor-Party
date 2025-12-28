@@ -427,7 +427,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
         <div class="b">
           <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
             <div style="font-weight:950;">Day 1 — Saturday</div>
-            <span class="pill">End night in Brooklyn</span>
+            <span class="pill">Kraken & his Kreatures Home Hangout</span>
           </div>
 
 
@@ -542,14 +542,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
   // -------------------------
   // Fixed plan phases (for highlight + hero title reaction)
   // -------------------------
-  const phases = [
-    { key:"breakfast", label:"Breakfast", emoji:"🍳", color:"var(--warn)" },
-    { key:"arsenal", label:"Arsenal", emoji:"⚽", color:"var(--neon2)" },
-    { key:"gaming", label:"Gaming", emoji:"🎮", color:"var(--neon1)" },
-    { key:"dinner", label:"Dinner", emoji:"🥗", color:"var(--good)" },
-    { key:"brooklyn", label:"Brooklyn", emoji:"🌃", color:"rgba(255,255,255,0.9)" },
-    { key:"rpm", label:"RPM", emoji:"🏎️", color:"var(--neon2)" }
-  ];
+
 
   // -------------------------
   // Local state (quests + selected phase)
@@ -567,7 +560,6 @@ h1{margin:0;font-size:22px;font-weight:950;}
   }
 
   const defaultState = {
-    phase: "breakfast",
     quests: [
       { id: cryptoRandomId(), text:"Breakfast: everyone orders one wildcard item.", done:false },
       { id: cryptoRandomId(), text:"Ingame Fantasy Football", done:false },
