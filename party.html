@@ -422,13 +422,11 @@ h1{margin:0;font-size:22px;font-weight:950;}
       <section class="card">
         <div class="h">
           <h2>2-Day Plan</h2>
-          <div class="phaseRow" id="phaseRow"></div>
         </div>
         <div class="b">
-          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
             <div style="font-weight:950;">Day 1 — Saturday</div>
           </div>
-
 
           <div class="event" data-phase="arsenal">
             <div style="font-weight:950;">⚽ Arsenal vs Bournemouth: O’Hanlon’s</div>
@@ -454,7 +452,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
 
           <div style="height:12px"></div>
 
-          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
             <div style="font-weight:950;">Day 2 — Sunday</div>
             <span class="pill">Day begins at 10 AM</span>
           </div>
@@ -543,7 +541,14 @@ h1{margin:0;font-size:22px;font-weight:950;}
   // -------------------------
   // Fixed plan phases (for highlight + hero title reaction)
   // -------------------------
-
+  const phases = [
+    { key: "arsenal", label: "Arsenal", emoji: "⚽", color: "var(--neon1)" },
+    { key: "gaming", label: "Gaming", emoji: "🎮", color: "var(--neon2)" },
+    { key: "dinner", label: "Dinner", emoji: "🥗", color: "var(--warn)" },
+    { key: "brooklyn", label: "Brooklyn", emoji: "🌃", color: "var(--muted)" },
+    { key: "sunday-breakfast", label: "Breakfast", emoji: "🥞", color: "var(--good)" },
+    { key: "rpm", label: "RPM", emoji: "🏎️", color: "var(--neon1)" }
+  ];
 
   // -------------------------
   // Local state (quests + selected phase)
@@ -561,6 +566,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
   }
 
   const defaultState = {
+    phase: "sunday-breakfast",
     quests: [
       { id: cryptoRandomId(), text:"Breakfast: everyone orders one wildcard item.", done:false },
       { id: cryptoRandomId(), text:"Ingame Fantasy Football", done:false },
@@ -622,7 +628,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
       if(!raw) return structuredClone(defaultState);
       const parsed = JSON.parse(raw);
       return {
-        // phase: (typeof parsed.phase === "string" ? parsed.phase : defaultState.phase),
+        phase: (typeof parsed.phase === "string" ? parsed.phase : defaultState.phase),
         quests: Array.isArray(parsed.quests) ? parsed.quests : structuredClone(defaultState.quests)
       };
     } catch {
@@ -657,9 +663,9 @@ h1{margin:0;font-size:22px;font-weight:950;}
   }
 
   function highlightPlan(){
+    // Clear all active states since phase buttons are removed
     document.querySelectorAll(".event").forEach(ev => {
-      const ph = ev.getAttribute("data-phase");
-      ev.classList.toggle("active", ph === state.phase);
+      ev.classList.remove("active");
     });
   }
 
@@ -713,8 +719,7 @@ h1{margin:0;font-size:22px;font-weight:950;}
   }
 
   function updateHero(){
-    const p = phases.find(x => x.key === state.phase) || phases[0];
-    heroTitle.textContent = `${p.emoji} Kraken’s Bachelor Party HQ — ${p.label}`;
+    heroTitle.textContent = `🐙 Kraken's Bachelor Party HQ`;
     heroTitle.style.textShadow = `0 0 18px rgba(0,0,0,0.0)`;
     heroTitle.style.color = "var(--text)";
     heroTitle.style.setProperty("filter", "none");
@@ -722,13 +727,10 @@ h1{margin:0;font-size:22px;font-weight:950;}
     heroTitle.style.setProperty("background", `none`);
     heroTitle.style.setProperty("-webkit-background-clip", `initial`);
     heroTitle.style.setProperty("background-clip", `initial`);
-    // subtle inline accent via box-shadow on header pill would be heavier; keep minimal:
     heroTitle.style.borderBottom = `2px solid rgba(255,255,255,0.0)`;
-    heroTitle.style.setProperty("color", p.color);
   }
 
   function render(){
-    renderPhaseButtons();
     highlightPlan();
     renderQuests();
     updateHero();
