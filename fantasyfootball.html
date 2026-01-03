@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kraken's Fantasy Football</title>
+
+  <style>
+    :root{
+      --panel: rgba(10,10,14,0.55);
+      --border: rgba(255,255,255,0.10);
+      --text:#f4f4f4;
+      --muted:#bdbdbd;
+      --neon1:#00f5ff;
+      --neon2:#ff3df0;
+      --good:#67ff7a;
+      --bad:#ff5a5a;
+      --warn:#ffe66d;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0; min-height:100vh;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 650px at 10% 0%, rgba(0,245,255,0.16), transparent 60%),
+        radial-gradient(1000px 650px at 90% 10%, rgba(255,61,240,0.14), transparent 60%),
+        linear-gradient(180deg, #06060a, #0a0a10);
+    }
+
+    .orb{
+      position:fixed; width:280px; height:280px; border-radius:50%;
+      filter:blur(50px); opacity:.25; mix-blend-mode:screen; pointer-events:none;
+      animation: drift 14s ease-in-out infinite;
+    }
+    .orb.o1{background:var(--neon1); top:-90px; left:-70px;}
+    .orb.o2{background:var(--neon2); top:10%; right:-100px; animation-delay:-4s;}
+    .orb.o3{background:var(--warn); bottom:-120px; left:20%; animation-delay:-7s;}
+    @keyframes drift{
+      0%{transform:translate(0,0) scale(1);}
+      50%{transform:translate(40px,30px) scale(1.15);}
+      100%{transform:translate(0,0) scale(1);}
+    }
+
+    .wrap{padding:22px; display:grid; place-items:center; position:relative; z-index:1;}
+    .shell{
+      width:min(1100px, 96vw);
+      border-radius:22px;
+      background: var(--panel);
+      border:1px solid var(--border);
+      box-shadow:0 20px 70px rgba(0,0,0,0.65);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+    header{
+      padding:16px 18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    h1{margin:0;font-size:22px;font-weight:950;letter-spacing:.01em;}
+    .sub{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.45;}
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding:10px 12px;
+      background:rgba(255,255,255,0.08);
+      color:var(--text);
+      font-weight:850;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,0.14);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover{background:rgba(255,255,255,0.12);}
+    .btn.primary{border-color:rgba(0,245,255,.5);}
+    .btn.danger{border-color:rgba(255,90,90,.4);}
+
+    .content{padding:16px; display:grid; gap:14px;}
+    .card{
+      border-radius:18px;
+      background: rgba(0,0,0,0.18);
+      border:1px solid rgba(255,255,255,0.10);
+      overflow:hidden;
+    }
+    .card .h{
+      padding:14px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .card .h h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:900;
+    }
+    .card .b{padding:14px;}
+
+    .pill{
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.04);
+    }
+
+    /* Shots table */
+    .tableWrap{
+      overflow:auto;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.03);
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width: 860px;
+    }
+    thead th{
+      position:sticky;
+      top:0;
+      background:rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      z-index:2;
+    }
+    th, td{
+      padding:10px 10px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      vertical-align:top;
+      font-size:13px;
+    }
+    th{
+      color:#eaeaea;
+      font-weight:950;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+    tbody tr:hover td{background:rgba(255,255,255,0.03);}
+    .ruleCell{
+      min-width: 220px;
+      font-weight:950;
+      letter-spacing:.01em;
+    }
+    .cellInput{
+      width: 100%;
+      min-width: 140px;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(0,0,0,0.35);
+      color:#f4f4f4;
+      outline:none;
+      font-weight:800;
+    }
+    .cellInput::placeholder{color:rgba(255,255,255,0.25);}
+    .cellInput:focus{
+      border-color: rgba(0,245,255,0.55);
+      box-shadow: 0 0 0 3px rgba(0,245,255,0.10);
+    }
+
+    /* Sips list */
+    .row{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      margin-bottom:10px;
+    }
+    .row:last-child{margin-bottom:0;}
+    .row input[type="checkbox"]{
+      width:20px; height:20px;
+      margin-top:2px;
+      accent-color: var(--neon1);
+      cursor:pointer;
+    }
+    .label{flex:1; font-weight:950; line-height:1.35;}
+    .meta{margin-top:4px; font-size:12px; color:var(--muted); line-height:1.4;}
+    .tag{
+      font-size:12px;
+      font-weight:950;
+      border-radius:999px;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.04);
+      color:#eee;
+      white-space:nowrap;
+      align-self:flex-start;
+    }
+    .tag.sip{border-color: rgba(0,245,255,0.40);}
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .small{color:var(--muted); font-size:12px; line-height:1.5;}
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:16px;
+      transform:translateX(-50%);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:900;
+      border:1px solid rgba(255,255,255,0.16);
+      background:rgba(0,0,0,0.55);
+      color:#f1f1f1;
+      display:none;
+      z-index:2000;
+      max-width: min(92%, 520px);
+      text-align:center;
+    }
+    .toast.show{display:block; animation: toastIn .22s ease-out;}
+    @keyframes toastIn{
+      from{opacity:0; transform:translateX(-50%) translateY(6px);}
+      to{opacity:1; transform:translateX(-50%) translateY(0);}
+    }
+
+    .fallbackList{
+      margin:0;
+      padding-left:18px;
+      color:#e8e8e8;
+    }
+    .fallbackList li{margin:8px 0; font-weight:850; line-height:1.35;}
+    .jsError{
+      display:none;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,90,90,0.35);
+      background: rgba(255,90,90,0.10);
+      color:#fff;
+      font-weight:850;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+
+  <div class="wrap">
+    <div class="shell">
+      <header>
+        <div>
+          <h1>⚽ Kraken’s Fantasy Football</h1>
+          <div class="sub">Shots: fill per person. Sipping rules: check as it happens. Saves locally.</div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn danger" id="resetBtn">Reset</button>
+          <a class="btn primary" href="./party.html">Back to HQ</a>
+        </div>
+      </header>
+
+      <div class="content">
+        <!-- SHOTS TABLE -->
+        <section class="card">
+          <div class="h">
+            <h2>Shots of Alcohol — Kreatures Table</h2>
+            <span class="pill">Auto-saves</span>
+          </div>
+          <div class="b">
+            <div class="small" style="margin-bottom:10px;">
+              Record predictions/outcomes per person (e.g., final score, first scorer, card counts, first sub time).
+            </div>
+
+            <div class="tableWrap">
+              <table aria-label="Shots table">
+                <thead>
+                  <tr>
+                    <th style="min-width:220px;">Shot Category</th>
+                    <th>Kraken</th>
+                    <th>DarkBitz</th>
+                    <th>Ryuk</th>
+                    <th>Aion</th>
+                    <th>7hala</th>
+                  </tr>
+                </thead>
+                <tbody id="shotsTbody"></tbody>
+              </table>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <button class="btn" id="clearShotsBtn">Clear Shots Table</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- SIP RULES -->
+        <section class="card">
+          <div class="h">
+            <h2>Sipping Rules</h2>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <span class="pill" id="sipsCount">0 checked</span>
+              <button class="btn primary" id="addRuleBtn">Add Rule</button>
+            </div>
+          </div>
+          <div class="b">
+            <!-- Fallback content (shows even if JS fails) -->
+            <ul class="fallbackList" id="fallbackSips">
+              <li>Every time Gyökeres touches his hair</li>
+              <li>Every time VAR checks something</li>
+              <li>Every time Noni side nets</li>
+              <li>Every time Arteta is yelling instructions</li>
+              <li>Every time Saka is fouled</li>
+            </ul>
+
+            <!-- JS will render interactive rules here (and hide fallback) -->
+            <div id="sipsList" style="margin-top:12px;"></div>
+
+            <div class="jsError" id="jsError">
+              Heads up: something blocked the interactive UI on this browser.
+              The rules above are still visible, but the checkboxes/table saving may not work.
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="h">
+            <h2>Notes</h2>
+            <span class="pill">Optional</span>
+          </div>
+          <div class="b">
+            <div class="small">
+              Want sipping rules as tap-counters (each occurrence increments)? Tell me and I’ll convert it.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer style="padding:14px 16px; border-top:1px solid rgba(255,255,255,0.08);">
+        <div class="controls">
+          <div class="small">Local storage key: <span style="opacity:.9;">kff_rules_v3</span></div>
+          <div class="small">Phone tip: swipe the shots table sideways.</div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const KEY = "kff_rules_v3";
+
+    const players = ["Kraken","DarkBitz","Ryuk","Aion","7hala"];
+
+    const shotCategories = [
+      { id: "final_scores", label: "Final Scores" },
+      { id: "first_goal_scorer", label: "First Goal Scorer" },
+      { id: "total_yellow_cards", label: "Total Yellow Cards" },
+      { id: "total_red_cards", label: "Total Red Cards" },
+      { id: "first_sub_time", label: "First Substitution – Time" },
+    ];
+
+    const defaultSipRules = [
+      { id: "gyokeres_hair", text: "Every time Gyökeres touches his hair", done:false },
+      { id: "var_check", text: "Every time VAR checks something", done:false },
+      { id: "noni_side_nets", text: "Every time Noni side nets", done:false },
+      { id: "arteta_yelling", text: "Every time Arteta is yelling instructions", done:false },
+      { id: "saka_fouled", text: "Every time Saka is fouled", done:false },
+    ];
+
+    function clone(obj){
+      // safer than structuredClone across older browsers
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function toast(msg, good=true){
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.borderColor = good ? "rgba(103,255,122,0.35)" : "rgba(255,90,90,0.35)";
+      el.style.boxShadow = good ? "0 0 0 3px rgba(103,255,122,0.10)" : "0 0 0 3px rgba(255,90,90,0.10)";
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(()=> el.classList.remove("show"), 850);
+    }
+
+    function cryptoId(){
+      if (window.crypto && window.crypto.getRandomValues) {
+        const buf = new Uint32Array(2);
+        window.crypto.getRandomValues(buf);
+        return buf[0].toString(16) + buf[1].toString(16);
+      }
+      return Math.random().toString(16).slice(2) + Date.now().toString(16);
+    }
+
+    function ensureShotsShape(shots){
+      shotCategories.forEach(c => {
+        if(!shots[c.id] || typeof shots[c.id] !== "object") shots[c.id] = {};
+        players.forEach(p => {
+          if(typeof shots[c.id][p] !== "string") shots[c.id][p] = "";
+        });
+      });
+      return shots;
+    }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        if(!raw){
+          const seed = { shots: ensureShotsShape({}), sips: clone(defaultSipRules) };
+          save(seed);
+          return seed;
+        }
+        const parsed = JSON.parse(raw);
+        const shots = ensureShotsShape((parsed.shots && typeof parsed.shots === "object") ? parsed.shots : {});
+        const sips = Array.isArray(parsed.sips) ? parsed.sips : clone(defaultSipRules);
+        return { shots, sips };
+      } catch {
+        const fallback = { shots: ensureShotsShape({}), sips: clone(defaultSipRules) };
+        save(fallback);
+        return fallback;
+      }
+    }
+
+    function save(state){
+      localStorage.setItem(KEY, JSON.stringify(state));
+    }
+
+    let state = load();
+
+    // Shots table
+    function renderShotsTable(){
+      const tbody = document.getElementById("shotsTbody");
+      tbody.innerHTML = "";
+
+      shotCategories.forEach(cat => {
+        const tr = document.createElement("tr");
+
+        const tdRule = document.createElement("td");
+        tdRule.className = "ruleCell";
+        tdRule.textContent = cat.label;
+        tr.appendChild(tdRule);
+
+        players.forEach(player => {
+          const td = document.createElement("td");
+          const input = document.createElement("input");
+          input.className = "cellInput";
+          input.type = "text";
+          input.placeholder = "Type…";
+          input.value = (state.shots && state.shots[cat.id] && state.shots[cat.id][player]) ? state.shots[cat.id][player] : "";
+
+          input.addEventListener("input", () => {
+            state.shots[cat.id][player] = input.value;
+            debouncedSave();
+          });
+
+          input.addEventListener("blur", () => {
+            state.shots[cat.id][player] = input.value;
+            save(state);
+          });
+
+          td.appendChild(input);
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    let saveTimer = null;
+    function debouncedSave(){
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => save(state), 250);
+    }
+
+    document.getElementById("clearShotsBtn").addEventListener("click", () => {
+      if(!confirm("Clear the entire shots table on this device?")) return;
+      shotCategories.forEach(c => players.forEach(p => state.shots[c.id][p] = ""));
+      save(state);
+      renderShotsTable();
+      toast("Shots table cleared ✅", true);
+    });
+
+    // Sips (checkbox)
+    function renderSipCount(){
+      const count = state.sips.filter(r => !!r.done).length;
+      document.getElementById("sipsCount").textContent = count + " checked";
+    }
+
+    function renderSips(){
+      const root = document.getElementById("sipsList");
+      root.innerHTML = "";
+
+      // hide fallback list once JS is alive
+      const fallback = document.getElementById("fallbackSips");
+      if (fallback) fallback.style.display = "none";
+
+      state.sips.forEach(rule => {
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = !!rule.done;
+
+        const mid = document.createElement("div");
+        mid.style.flex = "1";
+
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = rule.text;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = cb.checked ? "Logged ✅" : "Not yet";
+
+        mid.appendChild(label);
+        mid.appendChild(meta);
+
+        const tag = document.createElement("div");
+        tag.className = "tag sip";
+        tag.textContent = "SIP";
+
+        const del = document.createElement("button");
+        del.className = "btn";
+        del.style.padding = "8px 10px";
+        del.style.borderRadius = "12px";
+        del.style.background = "rgba(255,255,255,0.06)";
+        del.style.borderColor = "rgba(255,255,255,0.12)";
+        del.textContent = "✕";
+        del.title = "Delete rule";
+
+        cb.addEventListener("change", () => {
+          rule.done = cb.checked;
+          save(state);
+          meta.textContent = cb.checked ? "Logged ✅" : "Not yet";
+          renderSipCount();
+        });
+
+        del.addEventListener("click", () => {
+          if(!confirm("Delete this rule?")) return;
+          state.sips = state.sips.filter(r => r.id !== rule.id);
+          save(state);
+          renderAll();
+        });
+
+        row.appendChild(cb);
+        row.appendChild(mid);
+        row.appendChild(tag);
+        row.appendChild(del);
+        root.appendChild(row);
+      });
+
+      renderSipCount();
+    }
+
+    document.getElementById("addRuleBtn").addEventListener("click", () => {
+      const text = prompt("Add a new sipping rule:");
+      if(!text || !text.trim()) return;
+      state.sips.unshift({ id: "custom_" + cryptoId(), text: text.trim(), done:false });
+      save(state);
+      renderAll();
+      toast("Rule added ✅", true);
+    });
+
+    // Reset
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if(!confirm("Reset everything (shots + sipping rules) on this device?")) return;
+      state.shots = ensureShotsShape({});
+      state.sips = clone(defaultSipRules);
+      save(state);
+      renderAll();
+      toast("Reset ✅", true);
+    });
+
+    function renderAll(){
+      renderShotsTable();
+      renderSips();
+    }
+
+    // Init (guard for any JS issues)
+    try{
+      renderAll();
+    } catch (e){
+      console.error(e);
+      document.getElementById("jsError").style.display = "block";
+      // keep fallback list visible
+    }
+  </script>
+</body>
+</html>
